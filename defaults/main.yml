@@ -2,6 +2,7 @@
 # Role default lower priority variables
 iptables_zones:
   - SERVICE:
+    - name: SERVICE
     - interfaces:
       - service-01
     - open_services:
@@ -11,6 +12,7 @@ iptables_zones:
         ports: 22
 
   - MANAGEMENT:
+    - name: MANAGEMENT
     - interfaces:
       - mgmt-01
     - open_services:
@@ -20,6 +22,7 @@ iptables_zones:
         ports: 22
 
   - MONITORING:
+    -name: MONITORING
     - interfaces:
       - monitor-01
     - open_services:
@@ -29,6 +32,7 @@ iptables_zones:
         ports: 6556
 
   - BACKUP:
+    - name: BACKUP
     - interfaces:
       - backup-01
     - open_services:
@@ -42,13 +46,14 @@ iptables_zones:
         multiple: yes
         ports: 1500:1501,1552:1553,1581
 
-- NAS:
-  - interfaces:
-    - nas-01
-  - open_services:
+  - NAS:
+    - name: NAS
+    - interfaces:
+      - nas-01
+    - open_services:
 
-- SAN:
-  - interfaces:
-    - san-01
-  - open_services:
-    
+  - SAN:
+    - name: SAN
+    - interfaces:
+      - san-01
+    - open_services:
