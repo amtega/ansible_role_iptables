@@ -38,39 +38,32 @@ custom_INPUT_SAN_rules:
 custom_INPUT_LOG_rules:
 
 iptables_zones:
-  - SERVICE:
-    - name: SERVICE
-    - interfaces:
+  - name: SERVICE
+    interfaces:
       - service-01
-    - open_services: {{ open_services_SERVICE }}
+    open_services: "{{ open_services_SERVICE }}"
 
-  - MANAGEMENT:
-    - name: MANAGEMENT
-    - interfaces:
+  - name: MANAGEMENT
+    interfaces:
       - mgmt-01
-    - open_services: {{ open_services_MANAGEMENT }}
+    open_services: "{{ open_services_MANAGEMENT }}"
 
-  - MONITORING:
-    -name: MONITORING
-    - interfaces:
+  - name: MONITORING
+    interfaces:
       - monitor-01
-    - open_services: {{ open_services_MONITORING }}
+    open_services: "{{ open_services_MONITORING }}"
 
-
-  - BACKUP:
-    - name: BACKUP
-    - interfaces:
+  - name: BACKUP
+    interfaces:
       - backup-01
-    - open_services: {{ open_services_BACKUP }}
+    open_services: "{{ open_services_BACKUP }}"
 
-  - NAS:
-    - name: NAS
-    - interfaces:
+  - name: NAS
+    interfaces:
       - nas-01
-    - open_services:
+    open_services:
 
-  - SAN:
-    - name: SAN
-    - interfaces:
+  - name: SAN
+    interfaces:
       - san-01
-    - open_services:
+    open_services:
