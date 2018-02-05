@@ -73,9 +73,25 @@
 # INPUT
 {{ custom_INPUT_{{ zone.name }}_rules }}
 
-{% for rule in zone.open_services %}
+  {% for rule in zone.open_services %}
+    # Allow {{ rule.service_name }}
+    {% if rule.src_net is defined %}
+      {% if rule.multiple == "yes" %}
+        -A INPUT-{{ zone.name }} -s {{ rule.src_net }} -p tcp -m state --state NEW -m tcp -m multiport --dports {{ rule.ports }} -j ACCEPT
+      {% else %}
+        -A INPUT-{{ zone.name }} -s {{ rule.src_net }} -p tcp -m state --state NEW -m tcp  --dport {{ rule.ports }} -j ACCEPT
+      {% endif %}
+    {% else %}
+      {% if rule.multiple == "yes" %}
+        -A INPUT-{{ zone.name }} -p tcp -m state --state NEW -m tcp -m multiport --dports {{ rule.ports }} -j ACCEPT
+      {% else %}
+        -A INPUT-{{ zone.name }} -p tcp -m state --state NEW -m tcp  --dport {{ rule.ports }} -j ACCEPT
+      {% endif %}
+    {% endif %}
+  {% endfor %}
 
-{% endfor %}
+# Log input traffic not allowed
+-A INPUT-{{ zone.name }} -j INPUT-LOG
 
 # Deny other input traffic
 -A INPUT-{{ zone.name }} -j INPUT-DENY
@@ -85,3 +101,18 @@
 # Accept all output traffic
 -A OUTPUT-{{ zone.name }} -j ACCEPT
 {% endfor %}
+
+#
+# Common rules
+#
+
+# Traffic log chains
+-A INPUT-LOG  -m limit --limit 3/min -m pkttype ! --pkt-type multicast  -m tcp -p tcp --tcp-flags FIN,SYN,RST,ACK SYN -j LOG --log-level 7 --log-prefix "FW denied: " --log-tcp-options --log-ip-options
+-A INPUT-LOG -m limit --limit 3/min -m pkttype ! --pkt-type multicast  -m udp -p udp -j LOG --log-level 7 --log-prefix "FW denied: " --log-tcp-options --log-ip-options
+-A INPUT-LOG -j RETURN
+
+# Deny chains
+-A INPUT-DENY -j REJECT --reject-with icmp-host-prohibited
+-A OUTPUT-DENY -j REJECT --reject-with icmp-host-prohibited
+
+COMMIT
