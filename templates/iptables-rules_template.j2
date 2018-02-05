@@ -17,7 +17,7 @@
 #INPUT
 
 {% for zone in iptables_zones %}
-  -N INPUT-{{ zone.name }}
+-N INPUT-{{ zone.name }}
 {% endfor %}
 -N INPUT-DENY
 -N INPUT-LOG
@@ -25,7 +25,7 @@
 #OUTPUT
 
 {% for zone in iptables_zones %}
-  -N OUTPUT-{{ zone.name }}
+-N OUTPUT-{{ zone.name }}
 {% endfor %}
 -N OUTPUT-DENY
 -N OUPUT-LOG
@@ -49,9 +49,9 @@
 # Define jumps for every interface
 -A INPUT -i lo -j ACCEPT
 {% for zone in iptables_zones %}
-  {% for interface in zone.interfaces %}
-    -A INPUT -i {{ interface }} -j INPUT-{{ zone.name }}
-  {% endfor %}
+{% for interface in zone.interfaces %}
+-A INPUT -i {{ interface }} -j INPUT-{{ zone.name }}
+{% endfor %}
 {% endfor %}
 -A INPUT -j INPUT-DENY
 
@@ -60,47 +60,12 @@
 #
 
 {% for zone in iptables_zones %}
-  {% for interface in zone.interfaces %}
-    -A OUTPUT -o {{ interface }} -j OUTPUT-{{ zone.name }}
-  {% endfor %}
+{% for interface in zone.interfaces %}
+-A OUTPUT -o {{ interface }} -j OUTPUT-{{ zone.name }}
+{% endfor %}
 {% endfor %}
 
-{% for zone in iptables_zones %}
-#
-# Rules for the {{ zone.name }} interface
-#
 
-# INPUT
-{{ custom_INPUT_{{ zone.name }}_rules }}
-
-  {% for rule in zone.open_services %}
-    # Allow {{ rule.service_name }}
-    {% if rule.src_net is defined %}
-      {% if rule.multiple == "yes" %}
-        -A INPUT-{{ zone.name }} -s {{ rule.src_net }} -p tcp -m state --state NEW -m tcp -m multiport --dports {{ rule.ports }} -j ACCEPT
-      {% else %}
-        -A INPUT-{{ zone.name }} -s {{ rule.src_net }} -p tcp -m state --state NEW -m tcp  --dport {{ rule.ports }} -j ACCEPT
-      {% endif %}
-    {% else %}
-      {% if rule.multiple == "yes" %}
-        -A INPUT-{{ zone.name }} -p tcp -m state --state NEW -m tcp -m multiport --dports {{ rule.ports }} -j ACCEPT
-      {% else %}
-        -A INPUT-{{ zone.name }} -p tcp -m state --state NEW -m tcp  --dport {{ rule.ports }} -j ACCEPT
-      {% endif %}
-    {% endif %}
-  {% endfor %}
-
-# Log input traffic not allowed
--A INPUT-{{ zone.name }} -j INPUT-LOG
-
-# Deny other input traffic
--A INPUT-{{ zone.name }} -j INPUT-DENY
-
-# OUTPUT
-
-# Accept all output traffic
--A OUTPUT-{{ zone.name }} -j ACCEPT
-{% endfor %}
 
 #
 # Common rules

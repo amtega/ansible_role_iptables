@@ -1,16 +1,8 @@
 ---
 # Role default lower priority variables
 open_services_SERVICE:
-  - service_name: ssh
-    src_net:
-    multiple: no
-    ports: 22
 
 open_services_MANAGEMENT:
-  - service_name: ssh
-    src_net:
-    multiple: no
-    ports: 22
 
 open_services_MONITORING:
   - service_name: checkMK
@@ -41,22 +33,43 @@ iptables_zones:
   - name: SERVICE
     interfaces:
       - service-01
-    open_services: "{{ open_services_SERVICE }}"
+    open_services:
+      - service_name: ssh
+        src_net:
+        multiple: no
+        ports: 22
 
   - name: MANAGEMENT
     interfaces:
       - mgmt-01
-    open_services: "{{ open_services_MANAGEMENT }}"
+    open_services:
+      - service_name: ssh
+        src_net:
+        multiple: no
+        ports: 22
 
   - name: MONITORING
     interfaces:
       - monitor-01
-    open_services: "{{ open_services_MONITORING }}"
+    open_services:
+      - service_name: checkMK
+        src_net:
+        multiple: no
+        ports: 6556
 
   - name: BACKUP
     interfaces:
       - backup-01
-    open_services: "{{ open_services_BACKUP }}"
+    open_services:
+      - service_name: Bacula
+        src_net:
+        multiple: no
+        ports: 9101
+
+      - service_name: Tivoli Storage Manager
+        src_net:
+        multiple: yes
+        ports: 1500:1501,1552:1553,1581
 
   - name: NAS
     interfaces:
