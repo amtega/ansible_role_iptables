@@ -74,9 +74,9 @@ iptables_zones:
   - name: NAS
     interfaces:
       - nas-01
-    open_services:
+    open_services: []
 
   - name: SAN
     interfaces:
       - san-01
-    open_services:
+    open_services: []

@@ -65,7 +65,48 @@
 {% endfor %}
 {% endfor %}
 
+# =======================================================================================
+{% for zone in iptables_zones %}
+#
+# Rules for the {{ zone.name }} interface
+#
 
+{% for rule in zone.open_services %}
+# Allow {{ rule.service_name }}
+{% if rule.src_net is defined %}
+{% if rule.multiple %}
+-A INPUT-{{ zone.name }} -s {{ rule.src_net }} -p tcp -m state --state NEW -m tcp -m multiport --dports {{ rule.ports }} -j ACCEPT
+{% else %}
+-A INPUT-{{ zone.name }} -s {{ rule.src_net }} -p tcp -m state --state NEW -m tcp  --dport {{ rule.ports }} -j ACCEPT
+{% endif %}
+{% else %}
+{% if rule.multiple %}
+-A INPUT-{{ zone.name }} -p tcp -m state --state NEW -m tcp -m multiport --dports {{ rule.ports }} -j ACCEPT
+{% else %}
+-A INPUT-{{ zone.name }} -p tcp -m state --state NEW -m tcp  --dport {{ rule.ports }} -j ACCEPT
+{% endif %}
+{% endif %}
+{% endfor %}
+
+
+
+# Log input traffic not allowed
+{% if zone.name == "SERVICE" %}
+-A INPUT-{{ zone.name }} -j INPUT-LOG
+{% else %}
+#-A INPUT-{{ zone.name }} -j INPUT-LOG
+{% endif %}
+
+# Deny other input traffic
+-A INPUT-{{ zone.name }} -j INPUT-DENY
+
+# OUTPUT
+
+# Accept all output traffic
+-A OUTPUT-{{ zone.name }} -j ACCEPT
+
+{% endfor %}
+# =======================================================================================
 
 #
 # Common rules
