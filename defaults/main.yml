@@ -29,6 +29,13 @@ open_services_BACKUP:
     multiple: yes
     ports: 1500:1501,1552:1553,1581
 
+custom_INPUT_rules:
+custom_INPUT_SERVICE_rules:
+custom_INPUT_MANAGEMENT_rules:
+custom_INPUT_BACKUP_rules:
+custom_INPUT_NAS_rules:
+custom_INPUT_SAN_rules:
+custom_INPUT_LOG_rules:
 
 iptables_zones:
   - SERVICE:
@@ -36,7 +43,6 @@ iptables_zones:
     - interfaces:
       - service-01
     - open_services: {{ open_services_SERVICE }}
-
 
   - MANAGEMENT:
     - name: MANAGEMENT
