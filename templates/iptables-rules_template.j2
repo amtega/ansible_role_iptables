@@ -71,6 +71,10 @@
 # Rules for the {{ zone.name }} interface
 #
 
+# Custom rules for {{ zone.name }} input
+{% set custom_rules = "custom_INPUT_" + zone.name  + "_rules" %}
+{{ hostvars[inventory_hostname][custom_rules] | default(vars[custom_rules]) }}
+
 {% for rule in zone.open_services %}
 # Allow {{ rule.service_name }}
 {% if rule.src_net is defined %}
@@ -87,8 +91,6 @@
 {% endif %}
 {% endif %}
 {% endfor %}
-
-
 
 # Log input traffic not allowed
 {% if zone.name == "SERVICE" %}
@@ -111,6 +113,9 @@
 #
 # Common rules
 #
+
+# Custom rules for LOG input
+{{ custom_INPUT_LOG_rules }}
 
 # Traffic log chains
 -A INPUT-LOG  -m limit --limit 3/min -m pkttype ! --pkt-type multicast  -m tcp -p tcp --tcp-flags FIN,SYN,RST,ACK SYN -j LOG --log-level 7 --log-prefix "FW denied: " --log-tcp-options --log-ip-options
