@@ -1,0 +1,26 @@
+
+
+# Install required packages
+# RedHat:
+#   -iptables
+#   -iptables-ipv6
+# CentOs:
+#   -iptables
+#   -iptables-services
+
+name: install iptables package
+package:
+  name: iptables
+  state: present
+
+name: install iptables-ipv6 package for RedHat
+package:
+  name: iptables-ipv6
+  state: present
+when: ansible_distribution == "RedHat"
+
+name: install iptables-services package for CentOS
+package:
+  name: iptables-services
+  state: present
+when: ansible_distribution == "CentOS"

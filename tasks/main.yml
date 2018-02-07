@@ -1,6 +1,10 @@
 ---
 # Role tasks
-- name: Create iptables-rules file
-  template:
-    src: iptables-rules_template.j2
-    dest: /home/jmouron/iptables-rules
+- name: install iptables packages
+  include_tasks: install.yml
+
+- name: create configuartion files for rules
+  include_tasks: configure.yml
+
+- name: setup iptables service
+  include_tasks: service.yml
