@@ -24,3 +24,10 @@ package:
   name: iptables-services
   state: present
 when: ansible_distribution == "CentOS"
+
+- name: Enable iptables service
+  sudo: yes
+  service:
+    name=iptables
+    enabled=yes
+    state=started
