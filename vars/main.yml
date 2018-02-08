@@ -1,4 +1,5 @@
 ---
 # Role variables
+iptables_config_dest: /etc/sysconfig/iptables-config
 iptables_rules_dest: /etc/sysconfig/iptables-rules
 iptables_save_dest: /etc/sysconfig/iptables

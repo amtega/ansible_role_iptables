@@ -6,6 +6,7 @@
 #   -iptables-ipv6
 # CentOs:
 #   -iptables
+# Both RedHat and CentOS if version >= 7 (sytemd based OS)
 #   -iptables-services
 
 name: install iptables package
@@ -19,11 +20,13 @@ package:
   state: present
 when: ansible_distribution == "RedHat"
 
-name: install iptables-services package for CentOS
+name: install iptables-services package for sytemd based OS
 package:
   name: iptables-services
   state: present
-when: ansible_distribution == "CentOS"
+when:
+    - ansible_distribution in ["RedHat", "CentOS"]
+    - ansible_distribution_version | version_compare('7', '>=')
 
 - name: Enable iptables service
   sudo: yes

@@ -1,5 +1,14 @@
 ---
 # Role default lower priority variables
+
+# Variables to fill iptables-config template
+
+iptables_config_modules: ""
+iptables_config_save_on_stop: "yes"
+iptables_config_save_on_restart: "no"
+
+# Variables to fill iptables-rules template
+
 open_services_SERVICE:
   - service_name: ssh
     src_net:
