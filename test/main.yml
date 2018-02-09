@@ -1,8 +1,22 @@
 ---
 # Tasks for tesing role
-- name: test iptables role
+- name: run idempotence test
   hosts: localhost
+  roles:
+    - role: amtega.docker_presets
+    - role: amtega.docker_sandbox
+      docker_sandbox_state: started
+      docker_sandbox_idempotence_test: false
+
+- name: test iptables role
+  hosts: docker_sandbox_containers
   roles:
     - amtega.iptables
   tags:
     - idempotence
+
+- name: cleanup docker docker sandbox
+  hosts: localhost
+  roles:
+    - role: amtega.docker_sandbox
+      docker_sandbox_state: absent
