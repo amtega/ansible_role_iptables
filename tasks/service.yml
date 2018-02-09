@@ -10,4 +10,5 @@
 - name: Reload iptables service
   service:
     name: iptables
-    state: reload
+    state: restarted
+    enabled: yes

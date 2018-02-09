@@ -8,6 +8,16 @@
       docker_sandbox_state: started
       docker_sandbox_idempotence_test: false
 
+- name: prepare docker containers for tests
+  hosts: docker_sandbox_containers
+  tasks:
+    - name: install firewalld package for sytemd based OS
+      package:
+        name: firewalld
+        state: present
+      when: ansible_distribution_version | version_compare('7', '>=')
+
+
 - name: test iptables role
   hosts: docker_sandbox_containers
   roles:

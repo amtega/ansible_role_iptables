@@ -34,14 +34,6 @@
     masked: yes
   when: ansible_distribution_version | version_compare('7', '>=')
 
-  - name: Disable networkmanager form systemd services
-    systemd:
-      name: networkmanager
-      enabled: no
-      state: stopped
-      masked: yes
-    when: ansible_distribution_version | version_compare('7', '>=')
-
 - name: Remove package system-config-firewall
   package:
     name: system-config-firewall
@@ -54,9 +46,3 @@
     regexp: '^exclude='
     line: 'exclude=system-config-firewall'
   when: ansible_distribution_version | version_compare('7', '>=')
-
-- name: Enable iptables service
-  service:
-    name: iptables
-    enabled: yes
-    state: started
