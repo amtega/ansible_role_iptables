@@ -8,7 +8,6 @@
   shell: iptables-save > {{ iptables_save_dest }}
 
 - name: Reload iptables service
-  sudo: yes
   service:
-    name=iptables
-    state=reload
+    name: iptables
+    state: reload
