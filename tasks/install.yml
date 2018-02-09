@@ -34,6 +34,14 @@
     masked: yes
   when: ansible_distribution_version | version_compare('7', '>=')
 
+  - name: Disable networkmanager form systemd services
+    systemd:
+      name: networkmanager
+      enabled: no
+      state: stopped
+      masked: yes
+    when: ansible_distribution_version | version_compare('7', '>=')
+
 - name: Remove package system-config-firewall
   package:
     name: system-config-firewall
