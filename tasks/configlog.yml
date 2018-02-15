@@ -14,3 +14,8 @@
     name: rsyslog
     state: restarted
     enabled: yes
+
+- name: Configure sysctl.conf to ensure firewall no logging to stdin
+  blockinfile:
+    path: /etc/sysctl.conf
+    block: "kernel.printk = 3 4 1 7"
