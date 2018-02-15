@@ -1,0 +1,16 @@
+#Configure log for firewall
+- name: Create firewall file for rsyslog
+  template:
+    src: rsyslog.j2
+    dest: "{{ rsyslog_config_fw_dest }}"
+
+- name: Create logrotate file for firewall log
+  template:
+    src: logrotate.j2
+    dest: "{{ logrotate_config_fw_dest }}"
+
+- name: Reload iptables service
+  service:
+    name: rsyslog
+    state: restarted
+    enabled: yes
