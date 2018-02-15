@@ -8,3 +8,6 @@
 
 - name: setup iptables service
   include_tasks: service.yml
+
+- name: configure logs for firewall
+  include_tasks: configlog.yml
