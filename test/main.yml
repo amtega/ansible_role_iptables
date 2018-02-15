@@ -1,32 +1,9 @@
 ---
 # Tasks for tesing role
-- name: run idempotence test
-  hosts: localhost
-  roles:
-    - role: amtega.docker_presets
-    - role: amtega.docker_sandbox
-      docker_sandbox_state: started
-      docker_sandbox_idempotence_test: false
-
-- name: prepare docker containers for tests
-  hosts: docker_sandbox_containers
-  tasks:
-    - name: install firewalld package for sytemd based OS
-      package:
-        name: firewalld
-        state: present
-      when: ansible_distribution_version | version_compare('7', '>=')
-
 
 - name: test iptables role
-  hosts: docker_sandbox_containers
+  hosts: CentOS
   roles:
     - amtega.iptables
   tags:
     - idempotence
-
-- name: cleanup docker docker sandbox
-  hosts: localhost
-  roles:
-    - role: amtega.docker_sandbox
-      docker_sandbox_state: absent

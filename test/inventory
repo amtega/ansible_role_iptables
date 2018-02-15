@@ -1,2 +1,4 @@
 ---
-localhost ansible_connection=local
+[CentOS]
+centos6 ansible_connection=ssh ansible_user=root ansible_ssh_pass=root
+centos7 ansible_connection=ssh ansible_user=root ansible_ssh_pass=root

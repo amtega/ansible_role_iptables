@@ -3,9 +3,9 @@
 
 # Variables to fill iptables-config template
 
-iptables_config_modules: ""
-iptables_config_save_on_stop: "yes"
-iptables_config_save_on_restart: "no"
+iptables_config_modules: "\"\""
+iptables_config_save_on_stop: "\"yes\""
+iptables_config_save_on_restart: "\"no\""
 
 # Variables to fill iptables-rules template
 
@@ -23,7 +23,7 @@ open_services_MANAGEMENT:
 
 open_services_MONITORING:
   - service_name: checkMK
-    src_net:
+    src_net: "10.0.0.0/24"
     multiple: no
     ports: 6556
 

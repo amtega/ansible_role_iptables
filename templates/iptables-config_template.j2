@@ -3,7 +3,7 @@
 # Space separated list of nat helpers (e.g. 'ip_nat_ftp ip_nat_irc'), which
 # are loaded after the firewall rules are applied. Options for the helpers are
 # stored in /etc/modprobe.conf.
-IPTABLES_MODULES= {{ iptables_config_modules }}
+IPTABLES_MODULES={{ iptables_config_modules }}
 
 # Unload modules on restart and stop
 #   Value: yes|no,  default: yes
@@ -16,13 +16,13 @@ IPTABLES_MODULES_UNLOAD="yes"
 #   Value: yes|no,  default: no
 # Saves all firewall rules to /etc/sysconfig/iptables if firewall gets stopped
 # (e.g. on system shutdown).
-IPTABLES_SAVE_ON_STOP= {{ iptables_config_save_on_stop }}
+IPTABLES_SAVE_ON_STOP={{ iptables_config_save_on_stop }}
 
 # Save current firewall rules on restart.
 #   Value: yes|no,  default: no
 # Saves all firewall rules to /etc/sysconfig/iptables if firewall gets
 # restarted.
-IPTABLES_SAVE_ON_RESTART= {{ iptables_config_save_on_restart }}
+IPTABLES_SAVE_ON_RESTART={{ iptables_config_save_on_restart }}
 
 # Save (and restore) rule and chain counter.
 #   Value: yes|no,  default: no

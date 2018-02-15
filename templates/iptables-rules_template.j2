@@ -77,17 +77,17 @@
 
 {% for rule in zone.open_services %}
 # Allow {{ rule.service_name }}
-{% if rule.src_net is defined %}
+{% if rule.src_net | default('') %}
 {% if rule.multiple %}
 -A INPUT-{{ zone.name }} -s {{ rule.src_net }} -p tcp -m state --state NEW -m tcp -m multiport --dports {{ rule.ports }} -j ACCEPT
 {% else %}
--A INPUT-{{ zone.name }} -s {{ rule.src_net }} -p tcp -m state --state NEW -m tcp  --dport {{ rule.ports }} -j ACCEPT
+-A INPUT-{{ zone.name }} -s {{ rule.src_net }} -p tcp -m state --state NEW -m tcp --dport {{ rule.ports }} -j ACCEPT
 {% endif %}
 {% else %}
 {% if rule.multiple %}
 -A INPUT-{{ zone.name }} -p tcp -m state --state NEW -m tcp -m multiport --dports {{ rule.ports }} -j ACCEPT
 {% else %}
--A INPUT-{{ zone.name }} -p tcp -m state --state NEW -m tcp  --dport {{ rule.ports }} -j ACCEPT
+-A INPUT-{{ zone.name }} -p tcp -m state --state NEW -m tcp --dport {{ rule.ports }} -j ACCEPT
 {% endif %}
 {% endif %}
 {% endfor %}
