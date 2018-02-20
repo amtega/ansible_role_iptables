@@ -1,7 +1,1 @@
 ---
-# Role variables
-iptables_config_dest: /etc/sysconfig/iptables-config
-iptables_rules_dest: /etc/sysconfig/iptables-rules
-iptables_save_dest: /etc/sysconfig/iptables
-logrotate_config_fw_dest: /etc/logrotate.d/firewall
-rsyslog_config_fw_dest: /etc/rsyslog.d/firewall.conf

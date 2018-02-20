@@ -1,6 +1,13 @@
 ---
 # Role default lower priority variables
 
+# Default path to config files
+iptables_config_dest: /etc/sysconfig/iptables-config
+iptables_rules_dest: /etc/sysconfig/iptables-rules
+iptables_save_dest: /etc/sysconfig/iptables
+logrotate_config_fw_dest: /etc/logrotate.d/firewall
+rsyslog_config_fw_dest: /etc/rsyslog.d/firewall.conf
+
 # Variables to fill iptables-config template
 
 iptables_config_modules: "\"\""
@@ -9,6 +16,7 @@ iptables_config_save_on_restart: "\"no\""
 
 # Variables to fill iptables-rules template
 
+#Define services and ports open for every firewall zone
 open_services_SERVICE:
   - service_name: ssh
     src_net:
@@ -38,6 +46,8 @@ open_services_BACKUP:
     multiple: yes
     ports: 1500:1501,1552:1553,1581
 
+# Reserve variables to define custom input rules for every firewall zone
+# Include variable for general INPUT rules which applies before jump to zone
 custom_INPUT_rules:
 custom_INPUT_SERVICE_rules:
 custom_INPUT_MANAGEMENT_rules:
@@ -47,6 +57,7 @@ custom_INPUT_NAS_rules:
 custom_INPUT_SAN_rules:
 custom_INPUT_LOG_rules:
 
+# Define firewall zones to jump with associated interfaces and services
 iptables_zones:
   - name: SERVICE
     interfaces:
