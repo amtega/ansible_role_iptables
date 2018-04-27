@@ -1,0 +1,10 @@
+# Create configuration files
+- name: Create iptables-config file
+  template:
+    src: iptables-config_template.j2
+    dest: "{{ iptables_config_dest }}"
+
+- name: Create iptables-rules file
+  template:
+    src: iptables-rules_template.j2
+    dest: "{{ iptables_rules_dest }}"
