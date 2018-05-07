@@ -1,2 +1,9 @@
 ---
 # Tasks for testing role
+
+- name: test iptables role
+  hosts: CentOS
+  roles:
+    - amtega.iptables
+  tags:
+    - idempotence

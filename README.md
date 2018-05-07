@@ -1,30 +1,51 @@
-# role_name
+# amtega.iptables
 
-A brief description of the role goes here.
+This is an [Ansible](http://www.ansible.com) role to configure a iptables based firewall segmented by zones
 
 ## Requirements
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- Ansible >= 2.4
+
 
 ## Role Variables
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+A list of all the default variables for this role is available in `defaults/main.yml`.
 
 ## Dependencies
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+-amtega.network_interfaces ( if you want use the rol with defaults vars )
 
 ## Example Playbook
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+This is an example playbook:
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+```yaml
+---
+
+- hosts: all
+  roles:
+    - amtega.iptables
+```
 
 ## Testing
+Role was writen for CentOS 6 & 7 and EL 6 & 7
 
-A description of how to run tests of the role if available.
+This role not use docker for test, since iptables need kernel specific modules to run.
+Deploy n virtual machines to test the rol and configure a inventory in amtega.iptables/test/inventory
+
+Create a task in amtega.iptables/test/main.yml with the following content:
+- name: test iptables role
+  hosts: <severs>
+  roles:
+    - amtega.iptables
+  tags:
+    - idempotence
+
+You can run the test with following commands:
+```shell
+$ cd amtega-iptables/test
+$ ansible-playbook main.yml -i inventory
+```
 
 ## License
 
@@ -44,5 +65,4 @@ GNU General Public License for more details or European Union Public License for
 
 ## Author Information
 
-- author_name 1 ([mail_adrress_1](mailto:mail_address_1))
-- author_name N ([mail_adrress_N](mailto:mail_address_N))
+- José Enrique Mourón Regueira
