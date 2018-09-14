@@ -84,7 +84,7 @@
 {% endif %}
 {% else %}
 {% if rule.multiple %}
--A INPUT-{{ zone.name }} -p  {{ rule.protocol | default("tcp") }} -m state --state NEW -m {{ rule.protocol | default("tcp") }} -m multiport --dports {{ rule.ports }} -j ACCEPT
+-A INPUT-{{ zone.name }} -p {{ rule.protocol | default("tcp") }} -m state --state NEW -m {{ rule.protocol | default("tcp") }} -m multiport --dports {{ rule.ports }} -j ACCEPT
 {% else %}
 -A INPUT-{{ zone.name }} -p {{ rule.protocol | default("tcp") }} -m state --state NEW -m {{ rule.protocol | default("tcp") }} --dport {{ rule.ports }} -j ACCEPT
 {% endif %}
