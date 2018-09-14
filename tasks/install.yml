@@ -24,7 +24,7 @@
   package:
     name: iptables-services
     state: present
-  when: ansible_distribution_version | version_compare('7', '>=')
+  when: ansible_distribution_version is version_compare('7', '>=')
 
 - name: Disable firewalld form systemd services
   systemd:
@@ -32,17 +32,17 @@
     enabled: no
     state: stopped
     masked: yes
-  when: ansible_distribution_version | version_compare('7', '>=')
+  when: ansible_distribution_version is version_compare('7', '>=')
 
 - name: Remove package system-config-firewall
   package:
     name: system-config-firewall
     state: absent
-  when: ansible_distribution_version | version_compare('7', '>=')
+  when: ansible_distribution_version is version_compare('7', '>=')
 
 - name: Ensure system-config-firewall package will not be installed by yum update
   lineinfile:
     path: /etc/yum.conf
     regexp: '^exclude='
     line: 'exclude=system-config-firewall'
-  when: ansible_distribution_version | version_compare('7', '>=')
+  when: ansible_distribution_version is version_compare('7', '>=')
