@@ -1,12 +1,6 @@
 
 # Persist iptables rules and reload service
 
-- name: Restore iptables rules fron template file
-  shell: iptables-restore {{ iptables_rules_dest }}
-
-- name: Save iptables rules
-  shell: iptables-save > {{ iptables_save_dest }}
-
 - name: Reload iptables service
   service:
     name: iptables
