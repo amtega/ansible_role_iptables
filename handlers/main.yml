@@ -2,8 +2,8 @@
 # Role handlers
 
 
-- name: Restore iptables rules fron template file
+- name: iptables Restore rules from template file
   shell: iptables-restore {{ iptables_rules_dest }}
 
-- name: Save iptables rules
+- name: iptables Save rules
   shell: iptables-save > {{ iptables_save_dest }}
