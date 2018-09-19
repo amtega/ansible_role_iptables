@@ -8,3 +8,6 @@
   template:
     src: iptables-rules_template.j2
     dest: "{{ iptables_rules_dest }}"
+  notify:
+    - iptables Restore rules from template file
+    - iptables Save rules
