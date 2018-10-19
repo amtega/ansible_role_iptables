@@ -1,4 +1,5 @@
 galaxy_info:
+  role_name: iptables
   author: José Enrique Mourón Regueira
   description: role to configure a iptables based firewall segmented by zones
   company: AMTEGA - Xunta de Galicia
