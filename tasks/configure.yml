@@ -3,6 +3,8 @@
   template:
     src: iptables-config_template.j2
     dest: "{{ iptables_config_dest }}"
+  notify:
+    - iptables Service reload
 
 - name: Create iptables-rules file
   template:
@@ -11,3 +13,4 @@
   notify:
     - iptables Restore rules from template file
     - iptables Save rules
+    - iptables Service reload

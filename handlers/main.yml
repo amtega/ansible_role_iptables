@@ -7,3 +7,9 @@
 
 - name: iptables Save rules
   shell: iptables-save > {{ iptables_save_dest }}
+
+- name: iptables Service reload
+  service:
+    name: iptables
+    state: restarted
+    enabled: yes

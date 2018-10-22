@@ -1,10 +1,4 @@
 
 # Persist iptables rules and reload service
-- name: force all notified handlers before reload service
+- name: force all notified handlers. Reload service if needed
   meta: flush_handlers
-
-- name: Reload iptables service
-  service:
-    name: iptables
-    state: restarted
-    enabled: yes
