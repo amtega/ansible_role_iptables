@@ -13,3 +13,9 @@
     name: iptables
     state: restarted
     enabled: yes
+
+- name: iptables Reload rsyslog service
+  service:
+    name: rsyslog
+    state: restarted
+    enabled: yes

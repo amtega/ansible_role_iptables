@@ -3,17 +3,15 @@
   template:
     src: rsyslog.j2
     dest: "{{ rsyslog_config_fw_dest }}"
+  notify:
+    - iptables Reload rsyslog service
 
 - name: Create logrotate file for firewall log
   template:
     src: logrotate.j2
     dest: "{{ logrotate_config_fw_dest }}"
-
-- name: Reload iptables service
-  service:
-    name: rsyslog
-    state: restarted
-    enabled: yes
+  notify:
+    - iptables Reload rsyslog service
 
 - name: Configure sysctl.conf to ensure firewall no logging to stdin
   blockinfile:
