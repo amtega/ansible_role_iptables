@@ -1,4 +1,7 @@
+---
+# Role service tasks
 
-# Persist iptables rules and reload service
-- name: force all notified handlers. Reload service if needed
-  meta: flush_handlers
+- meta: flush_handlers
+  tags:
+    - role::iptables
+    - role::iptables::service

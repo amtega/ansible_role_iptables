@@ -1,13 +1,10 @@
 ---
 # Role tasks
-- name: install iptables packages
-  include_tasks: install.yml
 
-- name: create configuartion files for rules
-  include_tasks: configure.yml
-
-- name: setup iptables service
-  include_tasks: service.yml
-
-- name: configure logs for firewall
-  include_tasks: configlog.yml
+- block:
+    - import_tasks: check.yml
+    - import_tasks: install.yml
+    - import_tasks: configure.yml
+    - import_tasks: service.yml
+  tags:
+    - role::iptables

@@ -1,16 +1,41 @@
-# Create configuration files
-- name: Create iptables-config file
-  template:
-    src: iptables-config_template.j2
-    dest: "{{ iptables_config_dest }}"
-  notify:
-    - iptables Service reload
+---
+# Role configure tasks
 
-- name: Create iptables-rules file
-  template:
-    src: iptables-rules_template.j2
-    dest: "{{ iptables_rules_dest }}"
-  notify:
-    - iptables Restore rules from template file
-    - iptables Save rules
-    - iptables Service reload
+- block:
+    - name: create iptables configuration file
+      template:
+        src: config.j2
+        dest: "{{ iptables_config_path }}"
+      notify:
+        - reload iptables service
+
+    - name: create iptables rules file
+      template:
+        src: rules.j2
+        dest: "{{ iptables_rules_path }}"
+      notify:
+        - restore iptables rules
+        - save iptables rules
+        - reload iptables service
+
+    - name: create confuration file for rsyslog
+      template:
+        src: rsyslog.j2
+        dest: "{{ iptables_rsyslog_config_path }}"
+      notify:
+        - reload rsyslog service
+
+    - name: create configuration file for logrotate
+      template:
+        src: logrotate.j2
+        dest: "{{ iptables_logrotate_config_path }}"
+
+# FIXME
+
+    - name: ensure iptables is no logging to stdin
+      blockinfile:
+        path: /etc/sysctl.conf
+        block: "kernel.printk = 3 4 1 7"
+  tags:
+    - role::iptables
+    - role::iptables::configure

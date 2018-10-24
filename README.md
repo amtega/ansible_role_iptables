@@ -1,11 +1,10 @@
 # amtega.iptables
 
-This is an [Ansible](http://www.ansible.com) role to configure a iptables based firewall segmented by zones
+This is an [Ansible](http://www.ansible.com) role to configure an iptables based firewall segmented by zones.
 
 ## Requirements
 
-- Ansible >= 2.4
-
+[Ansible 2.7+](http://docs.ansible.com/ansible/latest/intro_installation.html)
 
 ## Role Variables
 
@@ -13,7 +12,7 @@ A list of all the default variables for this role is available in `defaults/main
 
 ## Dependencies
 
--amtega.network_interfaces ( if you want use the rol with defaults vars )
+None.
 
 ## Example Playbook
 
@@ -28,40 +27,25 @@ This is an example playbook:
 ```
 
 ## Testing
-Role was writen for CentOS 6 & 7 and EL 6 & 7
 
-This role not use docker for test, since iptables need kernel specific modules to run.
-Deploy n virtual machines to test the rol and configure a inventory in amtega.iptables/test/inventory
+Tests are based on vagrant virtual machines. You can setup vagrant engine quickly using the playbook `files/setup.yml` available in the role [amtega.vagrant_engine](https://galaxy.ansible.com/amtega/vagrant_engine).
 
-Create a task in amtega.iptables/test/main.yml with the following content:
-- name: test iptables role
-  hosts: <severs>
-  roles:
-    - amtega.iptables
-  tags:
-    - idempotence
+Once you have vagrant, you can run the tests with the following commands:
 
-You can run the test with following commands:
 ```shell
 $ cd amtega-iptables/test
-$ ansible-playbook main.yml -i inventory
+$ ansible-playbook main.yml
 ```
 
 ## License
 
-Copyright (C) <YEAR> AMTEGA - Xunta de Galicia
+Copyright (C) 2018 AMTEGA - Xunta de Galicia
 
-This role is free software: you can redistribute it and/or modify
-it under the terms of:
-GNU General Public License version 3, or (at your option) any later version;
-or the European Union Public License, either Version 1.2 or – as soon
-they will be approved by the European Commission ­subsequent versions of
-the EUPL;
+This role is free software: you can redistribute it and/or modify it under the terms of:
 
-This role is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details or European Union Public License for more details.
+GNU General Public License version 3, or (at your option) any later version; or the European Union Public License, either Version 1.2 or – as soon they will be approved by the European Commission ­subsequent versions of the EUPL.
+
+This role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details or European Union Public License for more details.
 
 ## Author Information
 

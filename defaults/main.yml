@@ -1,50 +1,97 @@
 ---
 # Role default lower priority variables
 
-# Default path to config files
-iptables_config_dest: /etc/sysconfig/iptables-config
-iptables_rules_dest: /etc/sysconfig/iptables-rules
-iptables_save_dest: /etc/sysconfig/iptables
-logrotate_config_fw_dest: /etc/logrotate.d/firewall
-rsyslog_config_fw_dest: /etc/rsyslog.d/firewall.conf
+# List of dicts with the firewall zones
+#
+# {
+#   name: <name of the zone>
+#   interfaces:
+#     - <interface name 1>
+#     - <interface name N>
+# }
+#
+# Sample:
+#
+# {
+#   name: SERVICE
+#   interfaces:
+#     - eth0
+#     - eth1
+# }
 
-# Variables to fill iptables-config template
+iptables_zones:
+  - name: SERVICE
+    interfaces:
+      - service-01
 
-iptables_config_modules: "\"\""
-iptables_config_save_on_stop: "\"yes\""
-iptables_config_save_on_restart: "\"no\""
+  - name: BACKUP
+    interfaces:
+      - backup-01
 
-# Variables to fill iptables-rules template
+# List of dicts with the open services
+#
+# {
+#   name: <name of the zone>
+#   source:
+#
+# }
+# FIXME
 
-#Define services and ports open for every firewall zone
-open_services_SERVICE:
-  - service_name: ssh
-    src_net:
+iptables_services:
+  - name: ssh
+    source:
     multiple: no
     ports: 22
+    zones: SERVICE
 
-open_services_MANAGEMENT:
-  - service_name: ssh
-    src_net:
-    multiple: no
-    ports: 22
-
-open_services_MONITORING:
-  - service_name: checkMK
-    src_net: "10.0.0.0/24"
-    multiple: no
-    ports: 6556
-
-open_services_BACKUP:
-  - service_name: Bacula
-    src_net:
-    multiple: no
-    ports: 9101
-
-  - service_name: Tivoli Storage Manager
-    src_net:
+  - name: backup
+    source:
     multiple: yes
-    ports: 1500:1501,1552:1553,1581
+    ports:
+      - 1500:1501
+      - 1552:1553
+      - 1581
+    zones:
+      - SERVICE
+      - BACKUP
+
+# Save (and restore) rule and chain counter
+
+iptables_config_save_counter: no
+
+# Numeric status output
+
+iptables_config_status_numeric: yes
+
+# Verbose status output
+
+iptables_config_status_verbose: no
+
+# Status output with numbered lines
+
+iptables_config_status_line_numbers: yes
+
+# Paths to config files
+
+iptables_config_path: /etc/sysconfig/iptables-config
+iptables_rules_path: /etc/sysconfig/iptables-rules
+iptables_save_path: /etc/sysconfig/iptables
+iptables_log_path: /var/log/iptables.log
+iptables_rsyslog_config_path: /etc/rsyslog.d/iptables.conf
+iptables_logrotate_config_path: /etc/logrotate.d/firewall
+
+# Logrotate configuration
+
+iptables_config_logrotate: |
+      weekly
+      compress
+      dateext
+      maxage 365
+      notifempty
+      sharedscripts
+      postrotate
+          /bin/kill -HUP $(cat /var/run/syslogd.pid 2> /dev/null) 2> /dev/null || true
+      endscript
 
 # Reserve variables to define custom input rules for every firewall zone
 # Include variable for general INPUT rules which applies before jump to zone
@@ -57,34 +104,14 @@ custom_INPUT_NAS_rules:
 custom_INPUT_SAN_rules:
 custom_INPUT_LOG_rules:
 
-# Define firewall zones to jump with associated interfaces and services
-iptables_zones:
-  - name: SERVICE
-    interfaces:
-      - service-01
-    open_services: "{{ open_services_SERVICE }}"
 
-  - name: MANAGEMENT
-    interfaces:
-      - mgmt-01
-    open_services: "{{ open_services_MANAGEMENT }}"
 
-  - name: MONITORING
-    interfaces:
-      - monitor-01
-    open_services: "{{ open_services_MONITORING }}"
 
-  - name: BACKUP
-    interfaces:
-      - backup-01
-    open_services: "{{ open_services_BACKUP }}"
+# Proxy settings
 
-  - name: NAS
-    interfaces:
-      - nas-01
-    open_services: []
-
-  - name: SAN
-    interfaces:
-      - san-01
-    open_services: []
+iptables_http_proxy: >-
+  {{ ansible_facts.env.http_proxy | default('') }}
+iptables_https_proxy: >-
+  {{ ansible_facts.env.https_proxy | default('') }}
+iptables_no_proxy: >-
+  {{ ansible_facts.env.no_proxy | default('') }}
