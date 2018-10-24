@@ -1,8 +1,11 @@
+{{ ansible_managed | comment }}
+
 *filter
 
 #
-# Default policies: Drop all incoming traffic
+# Default policies: drop all incoming traffic
 #
+
 -P INPUT DROP
 
 # See net.ipv4.ip_forward in /etc/sysctl.conf
@@ -14,7 +17,7 @@
 # Create custom chains
 #
 
-#INPUT
+# INPUT
 
 {% for zone in iptables_zones %}
 -N INPUT-{{ zone.name }}
@@ -22,7 +25,7 @@
 -N INPUT-DENY
 -N INPUT-LOG
 
-#OUTPUT
+# OUTPUT
 
 {% for zone in iptables_zones %}
 -N OUTPUT-{{ zone.name }}
@@ -34,8 +37,8 @@
 # Rules for default INPUT chain
 #
 
-# Custom rules for default input
-{{ custom_INPUT_rules }}
+# Custom raw rules for default input
+{{ iptables_custom_INPUT_rules }}
 
 # Allow all traffic of already established sessions
 -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
