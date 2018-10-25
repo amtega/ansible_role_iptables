@@ -1,10 +1,10 @@
 {{ ansible_managed | comment }}
 
-IPTABLES_MODULES="{{ iptables_config_modules }}"
+IPTABLES_MODULES="{{ 'yes' if iptables_config_modules else 'no' }}"
 IPTABLES_MODULES_UNLOAD="yes"
-IPTABLES_SAVE_ON_STOP="{{ iptables_config_save_on_stop }}"
-IPTABLES_SAVE_ON_RESTART="{{ iptables_config_save_on_restart }}"
-IPTABLES_SAVE_COUNTER="{{ iptables_config_save_counter }}"
-IPTABLES_STATUS_NUMERIC="{{ iptables_config_status_numeric }}"
-IPTABLES_STATUS_VERBOSE="{{ iptables_config_status_verbose }}"
-IPTABLES_STATUS_LINENUMBERS="{{ iptables_config_status_line_numbers }}"
+IPTABLES_SAVE_ON_STOP="{{ 'yes' if iptables_config_save_on_stop else 'no' }}"
+IPTABLES_SAVE_ON_RESTART="{{ 'yes' if iptables_config_save_on_restart else 'no'}}"
+IPTABLES_SAVE_COUNTER="{{ 'yes' if iptables_config_save_counter else 'no' }}"
+IPTABLES_STATUS_NUMERIC="{{ 'yes' if iptables_config_status_numeric else 'no' }}"
+IPTABLES_STATUS_VERBOSE="{{ 'yes' if iptables_config_status_verbose else 'no' }}"
+IPTABLES_STATUS_LINENUMBERS="{{ 'yes' if iptables_config_status_line_numbers else 'no' }}"

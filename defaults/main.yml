@@ -22,42 +22,35 @@
 iptables_zones:
   - name: SERVICE
     interfaces:
-      - service-01
-
-  - name: BACKUP
-    interfaces:
-      - backup-01
+      - eth0
 
 # List of dicts with the open services
 #
 # {
 #   name: <name of the zone>
-#   source:
-#
+#   source: <source address (optional)>
+#   protocol: <protocol (optional, default is tcp)>
+#   log: <yes or no to indicate if logging will be done>
+#   ports: <string or list of strings with the port(s) to open>
+#   zones: <string or list of strings with the zone(s) to open>
 # }
-# FIXME
 
 iptables_services:
   - name: ssh
-    source:
-    multiple: no
     ports: 22
     zones: SERVICE
-
-  - name: backup
-    source:
-    multiple: yes
-    ports:
-      - 1500:1501
-      - 1552:1553
-      - 1581
-    zones:
-      - SERVICE
-      - BACKUP
 
 # Save (and restore) rule and chain counter
 
 iptables_config_save_counter: no
+
+# Save (and restore) rules on stop
+
+iptables_config_save_on_stop: yes
+
+# Save (and restore) rules on restart
+
+iptables_config_save_on_restart: no
 
 # Numeric status output
 
@@ -70,6 +63,10 @@ iptables_config_status_verbose: no
 # Status output with numbered lines
 
 iptables_config_status_line_numbers: yes
+
+# Modules to use
+
+iptables_config_modules:
 
 # Paths to config files
 
@@ -93,19 +90,69 @@ iptables_config_logrotate: |
           /bin/kill -HUP $(cat /var/run/syslogd.pid 2> /dev/null) 2> /dev/null || true
       endscript
 
-# Reserve variables to define custom input rules for every firewall zone
-# Include variable for general INPUT rules which applies before jump to zone
-custom_INPUT_rules:
-custom_INPUT_SERVICE_rules:
-custom_INPUT_MANAGEMENT_rules:
-custom_INPUT_MONITORING_rules:
-custom_INPUT_BACKUP_rules:
-custom_INPUT_NAS_rules:
-custom_INPUT_SAN_rules:
-custom_INPUT_LOG_rules:
+# List of raw rules to define the default policies. This rules will be applied
+# at the begining of the rules file
 
+iptables_default_policies_raw_rules:
+  - "-P INPUT DROP"
+  - "-P OUTPUT ACCEPT"
+  - "-P FORWARD DROP"
 
+# List of raw rules to add to the default INPUT chain. By default allow all
+# traffic from already established sessions and all ICMP traffic
 
+iptables_input_raw_rules:
+  - "-A INPUT -p icmp -m state --state RELATED -j ACCEPT"
+  - "-A INPUT -p icmp -m icmp --icmp-type 4 -j ACCEPT"
+  - "-A INPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT"
+  - "-A INPUT -p icmp -j DROP"
+
+# List of raw rules to add to the default INPUT-LOG chain
+
+iptables_input_log_raw_rules:
+  - >-
+    -A INPUT-LOG
+    -m limit
+    --limit 3/min
+    -m pkttype !
+    --pkt-type multicast
+    -m tcp
+    -p tcp
+    --tcp-flags FIN,SYN,RST,ACK SYN
+    -j LOG
+    --log-level 7
+    --log-prefix "FW denied: "
+    --log-tcp-options
+    --log-ip-options
+  - >-
+    -A INPUT-LOG
+    -m limit
+    --limit 3/min
+    -m pkttype !
+    --pkt-type multicast
+    -m udp
+    -p udp
+    -j LOG
+    --log-level 7
+    --log-prefix "FW denied: "
+    --log-tcp-options
+    --log-ip-options
+  - >-
+    -A INPUT-LOG
+    -j RETURN
+
+# List of raw rules to add to the default OUTPUT chain
+
+iptables_output_raw_rules: []
+
+# List of dicts with the raw rules you want to add to each zone:
+#
+# {
+#   name: <name of the zone>
+#   raw_rules: <list of strings with the raw rules>
+# }
+
+iptables_zones_raw_rules: []
 
 # Proxy settings
 

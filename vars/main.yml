@@ -42,7 +42,7 @@ iptables_os_packages:
     - iptables
     - iptables-ipv6
 
-iptables_os_obsolete:
+iptables_obsolete_os_packages:
   centos_6: []
 
   centos_7:

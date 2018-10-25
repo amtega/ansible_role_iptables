@@ -25,6 +25,18 @@
   hosts: vagrant_sandbox_vms
   roles:
     - role: amtega.iptables
+  vars:
+    iptables_zones:
+      - name: SERVICE
+        interfaces:
+          - eth0
+
+    iptables_services:
+      - name: ssh
+        ports:
+          - 22
+          - "{{ ansible_port }}"
+        zones: SERVICE
 
 - name: cleanup vagrant sandbox
   hosts: localhost

@@ -3,15 +3,12 @@
 *filter
 
 #
-# Default policies: drop all incoming traffic
+# Default policies
 #
 
--P INPUT DROP
-
-# See net.ipv4.ip_forward in /etc/sysctl.conf
--P FORWARD DROP
-
--P OUTPUT ACCEPT
+{% for rule in iptables_default_policies_raw_rules %}
+{{ rule }}
+{% endfor %}
 
 #
 # Create custom chains
@@ -37,19 +34,14 @@
 # Rules for default INPUT chain
 #
 
-# Custom raw rules for default input
-{{ iptables_custom_INPUT_rules }}
+# Raw rules
 
-# Allow all traffic of already established sessions
--A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
-
-# All all ICMP input traffic
--A INPUT -p icmp -m state --state RELATED -j ACCEPT
--A INPUT -p icmp -m icmp --icmp-type 4 -j ACCEPT
--A INPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT
--A INPUT -p icmp -j DROP
+{% for rule in iptables_input_raw_rules %}
+{{ rule }}
+{% endfor %}
 
 # Define jumps for every interface
+
 -A INPUT -i lo -j ACCEPT
 {% for zone in iptables_zones %}
 {% for interface in zone.interfaces %}
@@ -62,6 +54,14 @@
 # Rules for default OUTPUT chain
 #
 
+# Raw rules
+
+{% for rule in iptables_output_raw_rules %}
+{{ rule }}
+{% endfor %}
+
+# Define jumps for every interface
+
 {% for zone in iptables_zones %}
 {% for interface in zone.interfaces %}
 -A OUTPUT -o {{ interface }} -j OUTPUT-{{ zone.name }}
@@ -70,60 +70,57 @@
 
 {% for zone in iptables_zones %}
 #
-# Rules for the {{ zone.name }} interface
+# Rules for the zone {{ zone.name }}
 #
 
-# Custom rules for {{ zone.name }} input
-{% set custom_rules = "custom_INPUT_" + zone.name  + "_rules" %}
-{{ hostvars[inventory_hostname][custom_rules] | default(vars[custom_rules]) }}
+# Raw rules
 
-{% for rule in zone.open_services %}
-# Allow {{ rule.service_name }}
-{% if rule.src_net | default('') %}
-{% if rule.multiple %}
--A INPUT-{{ zone.name }} -s {{ rule.src_net }} -p {{ rule.protocol | default("tcp") }} -m state --state NEW -m {{ rule.protocol | default("tcp") }} -m multiport --dports {{ rule.ports }} -j ACCEPT
-{% else %}
--A INPUT-{{ zone.name }} -s {{ rule.src_net }} -p {{ rule.protocol | default("tcp") }} -m state --state NEW -m {{ rule.protocol | default("tcp") }} --dport {{ rule.ports }} -j ACCEPT
+{%for item in iptables_zones_raw_rules | selectattr("name", "equalto", zone.name) | list %}
+{% for rule in item.raw_rules %}
+{{ rule }}
+{% endfor %}
+{% endfor %}
+
+# Services rules
+
+{% for service in iptables_services %}
+{% if service.zones is string and service.zones == zone.name
+      or zone.name in service.zones %}
+{% if service.source is defined %}
+{% set source_string="-s " + service.source + " " %}
 {% endif %}
+{% if service.ports is number or (service.ports is string and ":" not in service.ports) %}
+{% set ports_string="--dport " + service.ports | string + " " %}
 {% else %}
-{% if rule.multiple %}
--A INPUT-{{ zone.name }} -p {{ rule.protocol | default("tcp") }} -m state --state NEW -m {{ rule.protocol | default("tcp") }} -m multiport --dports {{ rule.ports }} -j ACCEPT
-{% else %}
--A INPUT-{{ zone.name }} -p {{ rule.protocol | default("tcp") }} -m state --state NEW -m {{ rule.protocol | default("tcp") }} --dport {{ rule.ports }} -j ACCEPT
+{% set ports_string="-m multiport --dports " + service.ports | join(",") + " " %}
+{% endif %}
+-A INPUT-{{ zone.name }} {{ source_string | default(" ") }}-p {{ service.protocol | default("tcp") }} -m state --state NEW -m {{ service.protocol | default("tcp") }} {{ ports_string | default(" ")}}-j ACCEPT
+{% if service.log | default(false) %}
+-A INPUT-{{ zone.name }} -j INPUT-LOG
 {% endif %}
 {% endif %}
 {% endfor %}
 
-# Log input traffic not allowed
-{% if zone.name == "SERVICE" %}
--A INPUT-{{ zone.name }} -j INPUT-LOG
-{% else %}
-#-A INPUT-{{ zone.name }} -j INPUT-LOG
-{% endif %}
-
 # Deny other input traffic
--A INPUT-{{ zone.name }} -j INPUT-DENY
 
-# OUTPUT
+-A INPUT-{{ zone.name }} -j INPUT-DENY
 
 # Accept all output traffic
 -A OUTPUT-{{ zone.name }} -j ACCEPT
-
 {% endfor %}
 
 #
-# Common rules
+# Rules for default INPUT-LOG chain
 #
 
-# Custom rules for LOG input
-{{ custom_INPUT_LOG_rules }}
+{% for rule in iptables_input_log_raw_rules %}
+{{ rule }}
+{% endfor %}
 
-# Traffic log chains
--A INPUT-LOG  -m limit --limit 3/min -m pkttype ! --pkt-type multicast  -m tcp -p tcp --tcp-flags FIN,SYN,RST,ACK SYN -j LOG --log-level 7 --log-prefix "FW denied: " --log-tcp-options --log-ip-options
--A INPUT-LOG -m limit --limit 3/min -m pkttype ! --pkt-type multicast  -m udp -p udp -j LOG --log-level 7 --log-prefix "FW denied: " --log-tcp-options --log-ip-options
--A INPUT-LOG -j RETURN
-
+#
 # Deny chains
+#
+
 -A INPUT-DENY -j REJECT --reject-with icmp-host-prohibited
 -A OUTPUT-DENY -j REJECT --reject-with icmp-host-prohibited
 

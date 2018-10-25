@@ -6,24 +6,21 @@
       package:
         name: "{{ item }}"
         state: absent
-      loop: >-
-        {{ oracle_jdbc_connector_obsolete_os_packages[distro_packages_key] }}
+      loop: "{{ iptables_obsolete_os_packages[distro_packages_key] }}"
 
     - name: ensure obsolete packages will not be installed by a yum/dnf update
       lineinfile:
         path: /etc/yum.conf
         regexp: '^exclude='
         line: 'exclude="{{ item }}"'
-      loop: >-
-        {{ oracle_jdbc_connector_obsolete_os_packages[distro_packages_key] }}
+      loop: "{{ iptables_obsolete_os_packages[distro_packages_key] }}"
 
     - name: install required operating system packages
       package:
         name: "{{ item }}"
         state: present
-      loop: >-
-        {{ oracle_jdbc_connector_os_packages[distro_packages_key] }}
-  environment: "{{ oracle_jdbc_connector_http_proxy_environment }}"
+      loop: "{{ iptables_os_packages[distro_packages_key] }}"
+  environment: "{{ iptables_http_proxy_environment }}"
   vars:
     distro_packages_key: >-
       {{ ansible_facts.distribution
