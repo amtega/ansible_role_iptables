@@ -1,5 +1,4 @@
 {{ ansible_managed | comment }}
 
 {{ iptables_log_path }} {
-  {{ iptables_config_logrotate }}
-}
+{{ iptables_config_logrotate | indent(width=2, first=true) }}}

@@ -6,19 +6,19 @@
   listen: restore iptables rules
 
 - name: iptables save rules
-  shell: iptables-save > {{ iptables_rules_path }}
+  shell: iptables-save > {{ iptables_save_path }}
   listen: save iptables rules
 
 - name: iptables reload service
   service:
     name: iptables
-    state: reloaded
+    state: restarted
     enabled: yes
   listen: reload iptables service
 
 - name: iptables reload rsyslog
   service:
     name: rsyslog
-    state: reloaded
+    state: restarted
     enabled: yes
   listen: reload rsyslog service

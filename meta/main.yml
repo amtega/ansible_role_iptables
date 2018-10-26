@@ -3,7 +3,7 @@
 
 galaxy_info:
   role_name: iptables
-  author: José Enrique Mourón Regueira
+  author: José Enrique Mourón Regueira / Juan Antonio Valiño García
   description: Setup an iptables based firewall segmented by zones
   company: AMTEGA - Xunta de Galicia
   license: GPLv3 or EUPL

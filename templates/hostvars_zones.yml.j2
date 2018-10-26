@@ -1,0 +1,9 @@
+{{ ansible_managed | comment }}
+
+{% for v in hostvars[inventory_hostname] %}
+{% if v is search("^iptables_zone_.*")
+      and hostvars[inventory_hostname][v]['name'] is defined
+      and hostvars[inventory_hostname][v]['interfaces'] is defined %}
+- {{ hostvars[inventory_hostname][v] | to_json }}
+{% endif %}
+{% endfor %}

@@ -1,6 +1,6 @@
 {{ ansible_managed | comment }}
 
-IPTABLES_MODULES="{{ 'yes' if iptables_config_modules else 'no' }}"
+IPTABLES_MODULES="{{ iptables_config_modules }}"
 IPTABLES_MODULES_UNLOAD="yes"
 IPTABLES_SAVE_ON_STOP="{{ 'yes' if iptables_config_save_on_stop else 'no' }}"
 IPTABLES_SAVE_ON_RESTART="{{ 'yes' if iptables_config_save_on_restart else 'no'}}"

@@ -16,7 +16,7 @@
 
 # INPUT
 
-{% for zone in iptables_zones %}
+{% for zone in iptables_zones_managed %}
 -N INPUT-{{ zone.name }}
 {% endfor %}
 -N INPUT-DENY
@@ -24,7 +24,7 @@
 
 # OUTPUT
 
-{% for zone in iptables_zones %}
+{% for zone in iptables_zones_managed %}
 -N OUTPUT-{{ zone.name }}
 {% endfor %}
 -N OUTPUT-DENY
@@ -43,10 +43,14 @@
 # Define jumps for every interface
 
 -A INPUT -i lo -j ACCEPT
-{% for zone in iptables_zones %}
+{% for zone in iptables_zones_managed %}
+{% if zone.interfaces is string %}
+-A INPUT -i {{ zone.interfaces }} -j INPUT-{{ zone.name }}
+{% else %}
 {% for interface in zone.interfaces %}
 -A INPUT -i {{ interface }} -j INPUT-{{ zone.name }}
 {% endfor %}
+{% endif %}
 {% endfor %}
 -A INPUT -j INPUT-DENY
 
@@ -62,13 +66,17 @@
 
 # Define jumps for every interface
 
-{% for zone in iptables_zones %}
+{% for zone in iptables_zones_managed %}
+{% if zone.interfaces is string %}
+-A OUTPUT -o {{ zone.interfaces }} -j OUTPUT-{{ zone.name }}
+{% else %}
 {% for interface in zone.interfaces %}
 -A OUTPUT -o {{ interface }} -j OUTPUT-{{ zone.name }}
 {% endfor %}
+{% endif %}
 {% endfor %}
+{% for zone in iptables_zones_managed %}
 
-{% for zone in iptables_zones %}
 #
 # Rules for the zone {{ zone.name }}
 #
@@ -83,8 +91,8 @@
 
 # Services rules
 
-{% for service in iptables_services %}
-{% if service.zones is string and service.zones == zone.name
+{% for service in iptables_services_managed %}
+{% if (service.zones is string and service.zones == zone.name)
       or zone.name in service.zones %}
 {% if service.source is defined %}
 {% set source_string="-s " + service.source + " " %}
@@ -94,18 +102,20 @@
 {% else %}
 {% set ports_string="-m multiport --dports " + service.ports | join(",") + " " %}
 {% endif %}
--A INPUT-{{ zone.name }} {{ source_string | default(" ") }}-p {{ service.protocol | default("tcp") }} -m state --state NEW -m {{ service.protocol | default("tcp") }} {{ ports_string | default(" ")}}-j ACCEPT
-{% if service.log | default(false) %}
--A INPUT-{{ zone.name }} -j INPUT-LOG
-{% endif %}
+-A INPUT-{{ zone.name }} {{ source_string | default("") }}-p {{ service.protocol | default("tcp") }} -m state --state NEW -m {{ service.protocol | default("tcp") }} {{ ports_string | default("")}}-j ACCEPT
 {% endif %}
 {% endfor %}
+{% if zone.log | default(false) %}
+# Log rules
+-A INPUT-{{ zone.name }} -j INPUT-LOG
+{% endif %}
 
 # Deny other input traffic
 
 -A INPUT-{{ zone.name }} -j INPUT-DENY
 
 # Accept all output traffic
+
 -A OUTPUT-{{ zone.name }} -j ACCEPT
 {% endfor %}
 

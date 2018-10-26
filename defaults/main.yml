@@ -5,9 +5,8 @@
 #
 # {
 #   name: <name of the zone>
-#   interfaces:
-#     - <interface name 1>
-#     - <interface name N>
+#   interfaces: <string or list of strings with the zone interfaces>
+#   log: <yes or no to indicate if logging will be done>
 # }
 #
 # Sample:
@@ -19,10 +18,7 @@
 #     - eth1
 # }
 
-iptables_zones:
-  - name: SERVICE
-    interfaces:
-      - eth0
+iptables_zones: []
 
 # List of dicts with the open services
 #
@@ -30,15 +26,11 @@ iptables_zones:
 #   name: <name of the zone>
 #   source: <source address (optional)>
 #   protocol: <protocol (optional, default is tcp)>
-#   log: <yes or no to indicate if logging will be done>
 #   ports: <string or list of strings with the port(s) to open>
 #   zones: <string or list of strings with the zone(s) to open>
 # }
 
-iptables_services:
-  - name: ssh
-    ports: 22
-    zones: SERVICE
+iptables_services: []
 
 # Save (and restore) rule and chain counter
 
@@ -75,33 +67,34 @@ iptables_rules_path: /etc/sysconfig/iptables-rules
 iptables_save_path: /etc/sysconfig/iptables
 iptables_log_path: /var/log/iptables.log
 iptables_rsyslog_config_path: /etc/rsyslog.d/iptables.conf
-iptables_logrotate_config_path: /etc/logrotate.d/firewall
+iptables_logrotate_config_path: /etc/logrotate.d/iptables
 
 # Logrotate configuration
 
 iptables_config_logrotate: |
-      weekly
-      compress
-      dateext
-      maxage 365
-      notifempty
-      sharedscripts
-      postrotate
-          /bin/kill -HUP $(cat /var/run/syslogd.pid 2> /dev/null) 2> /dev/null || true
-      endscript
+  weekly
+  compress
+  dateext
+  maxage 365
+  notifempty
+  sharedscripts
+  postrotate
+    /bin/kill -HUP $(cat /var/run/syslogd.pid 2> /dev/null) 2> /dev/null || true
+  endscript
 
 # List of raw rules to define the default policies. This rules will be applied
 # at the begining of the rules file
 
 iptables_default_policies_raw_rules:
   - "-P INPUT DROP"
-  - "-P OUTPUT ACCEPT"
   - "-P FORWARD DROP"
+  - "-P OUTPUT ACCEPT"
 
 # List of raw rules to add to the default INPUT chain. By default allow all
 # traffic from already established sessions and all ICMP traffic
 
 iptables_input_raw_rules:
+  - "-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT"
   - "-A INPUT -p icmp -m state --state RELATED -j ACCEPT"
   - "-A INPUT -p icmp -m icmp --icmp-type 4 -j ACCEPT"
   - "-A INPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT"
@@ -153,6 +146,21 @@ iptables_output_raw_rules: []
 # }
 
 iptables_zones_raw_rules: []
+
+# Indicate if zones list must be loaded also from host variables. Any host
+# variable that begins with "iptables_zone_*" and contains the necessary
+# attributes will be loaded as a zone to manage by the role. The variables must
+# follow the dict structure detailed before for the `iptables_zones` list.
+
+iptables_load_zones_from_hostvars: true
+
+# Indicate if services list must be loaded also from host variables. Any host
+# variable that begins with "services_zone_*" and contains the necessary
+# attributes will be loaded as a service to manage by the role. The variables
+# must follow the dict structure detailed before for the `iptables_services`
+# list.
+
+iptables_load_services_from_hostvars: true
 
 # Proxy settings
 

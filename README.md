@@ -8,7 +8,12 @@ This is an [Ansible](http://www.ansible.com) role to configure an iptables based
 
 ## Role Variables
 
-A list of all the default variables for this role is available in `defaults/main.yml`.
+A list of all the default variables for this role is available in `defaults/main.yml`. The role setups the following facts:
+
+- iptables_hostvars_zones: list of zones loaded from host vars.
+- iptables_zones_managed: list of zones managed by the role.
+- iptables_hostvars_services: list of services loaded from host vars.
+- iptables_services_managed: list of services managed by the role.
 
 ## Dependencies
 
@@ -24,6 +29,23 @@ This is an example playbook:
 - hosts: all
   roles:
     - amtega.iptables
+  vars:
+    iptables_zones:
+      - name: SERVICE
+        interfaces: eth0
+        log: yes
+
+    iptables_services:
+      - name: ssh
+        ports: 22
+        zones: SERVICE
+
+      - name: http
+        protocol: tcp
+        ports:
+          - 80
+          - 8080
+        zones: SERVICE
 ```
 
 ## Testing
@@ -50,3 +72,4 @@ This role is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 ## Author Information
 
 - José Enrique Mourón Regueira
+- Juan Antonio Valiño García

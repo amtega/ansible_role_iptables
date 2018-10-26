@@ -8,13 +8,6 @@
         state: absent
       loop: "{{ iptables_obsolete_os_packages[distro_packages_key] }}"
 
-    - name: ensure obsolete packages will not be installed by a yum/dnf update
-      lineinfile:
-        path: /etc/yum.conf
-        regexp: '^exclude='
-        line: 'exclude="{{ item }}"'
-      loop: "{{ iptables_obsolete_os_packages[distro_packages_key] }}"
-
     - name: install required operating system packages
       package:
         name: "{{ item }}"
