@@ -1,0 +1,18 @@
+---
+# Role cleanup tasks
+
+- block:
+    - name: remove package exlusions created by older versions of the role
+      lineinfile:
+        path: /etc/yum.conf
+        regexp: "exclude=.system-config-firewall."
+        state: absent
+
+    - name: remove sysctl.conf entries created by older versions of the role
+      lineinfile:
+        path: /etc/sysctl.conf
+        regexp: "kernel.printk = 3 4 1 7"
+        state: absent
+  tags:
+    - role::iptables
+    - role::iptables::cleanup

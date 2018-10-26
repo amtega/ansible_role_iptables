@@ -1,21 +1,24 @@
 ---
 # Role handlers
 
+- name: iptables restore rules
+  shell: iptables-restore {{ iptables_rules_path }}
+  listen: restore iptables rules
 
-- name: iptables Restore rules from template file
-  shell: iptables-restore {{ iptables_rules_dest }}
+- name: iptables save rules
+  shell: iptables-save > {{ iptables_save_path }}
+  listen: save iptables rules
 
-- name: iptables Save rules
-  shell: iptables-save > {{ iptables_save_dest }}
-
-- name: iptables Service reload
+- name: iptables reload service
   service:
     name: iptables
     state: restarted
     enabled: yes
+  listen: reload iptables service
 
-- name: iptables Reload rsyslog service
+- name: iptables reload rsyslog
   service:
     name: rsyslog
     state: restarted
     enabled: yes
+  listen: reload rsyslog service

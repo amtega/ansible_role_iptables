@@ -1,90 +1,172 @@
 ---
 # Role default lower priority variables
 
-# Default path to config files
-iptables_config_dest: /etc/sysconfig/iptables-config
-iptables_rules_dest: /etc/sysconfig/iptables-rules
-iptables_save_dest: /etc/sysconfig/iptables
-logrotate_config_fw_dest: /etc/logrotate.d/firewall
-rsyslog_config_fw_dest: /etc/rsyslog.d/firewall.conf
+# List of dicts with the firewall zones
+#
+# {
+#   name: <name of the zone>
+#   interfaces: <string or list of strings with the zone interfaces>
+#   log: <yes or no to indicate if logging will be done>
+# }
+#
+# Sample:
+#
+# {
+#   name: SERVICE
+#   interfaces:
+#     - eth0
+#     - eth1
+# }
 
-# Variables to fill iptables-config template
+iptables_zones: []
 
-iptables_config_modules: "\"\""
-iptables_config_save_on_stop: "\"yes\""
-iptables_config_save_on_restart: "\"no\""
+# List of dicts with the open services
+#
+# {
+#   name: <name of the zone>
+#   source: <source address (optional)>
+#   protocol: <protocol (optional, default is tcp)>
+#   ports: <string or list of strings with the port(s) to open>
+#   zones: <string or list of strings with the zone(s) to open>
+# }
 
-# Variables to fill iptables-rules template
+iptables_services: []
 
-#Define services and ports open for every firewall zone
-open_services_SERVICE:
-  - service_name: ssh
-    src_net:
-    multiple: no
-    ports: 22
+# Save (and restore) rule and chain counter
 
-open_services_MANAGEMENT:
-  - service_name: ssh
-    src_net:
-    multiple: no
-    ports: 22
+iptables_config_save_counter: no
 
-open_services_MONITORING:
-  - service_name: checkMK
-    src_net: "10.0.0.0/24"
-    multiple: no
-    ports: 6556
+# Save (and restore) rules on stop
 
-open_services_BACKUP:
-  - service_name: Bacula
-    src_net:
-    multiple: no
-    ports: 9101
+iptables_config_save_on_stop: yes
 
-  - service_name: Tivoli Storage Manager
-    src_net:
-    multiple: yes
-    ports: 1500:1501,1552:1553,1581
+# Save (and restore) rules on restart
 
-# Reserve variables to define custom input rules for every firewall zone
-# Include variable for general INPUT rules which applies before jump to zone
-custom_INPUT_rules:
-custom_INPUT_SERVICE_rules:
-custom_INPUT_MANAGEMENT_rules:
-custom_INPUT_MONITORING_rules:
-custom_INPUT_BACKUP_rules:
-custom_INPUT_NAS_rules:
-custom_INPUT_SAN_rules:
-custom_INPUT_LOG_rules:
+iptables_config_save_on_restart: no
 
-# Define firewall zones to jump with associated interfaces and services
-iptables_zones:
-  - name: SERVICE
-    interfaces:
-      - service-01
-    open_services: "{{ open_services_SERVICE }}"
+# Numeric status output
 
-  - name: MANAGEMENT
-    interfaces:
-      - mgmt-01
-    open_services: "{{ open_services_MANAGEMENT }}"
+iptables_config_status_numeric: yes
 
-  - name: MONITORING
-    interfaces:
-      - monitor-01
-    open_services: "{{ open_services_MONITORING }}"
+# Verbose status output
 
-  - name: BACKUP
-    interfaces:
-      - backup-01
-    open_services: "{{ open_services_BACKUP }}"
+iptables_config_status_verbose: no
 
-  - name: NAS
-    interfaces:
-      - nas-01
-    open_services: []
+# Status output with numbered lines
 
-  - name: SAN
-    interfaces:
-      - san-01
-    open_services: []
+iptables_config_status_line_numbers: yes
+
+# Modules to use
+
+iptables_config_modules:
+
+# Paths to config files
+
+iptables_config_path: /etc/sysconfig/iptables-config
+iptables_rules_path: /etc/sysconfig/iptables-rules
+iptables_save_path: /etc/sysconfig/iptables
+iptables_log_path: /var/log/iptables.log
+iptables_rsyslog_config_path: /etc/rsyslog.d/iptables.conf
+iptables_logrotate_config_path: /etc/logrotate.d/iptables
+
+# Logrotate configuration
+
+iptables_config_logrotate: |
+  weekly
+  compress
+  dateext
+  maxage 365
+  notifempty
+  sharedscripts
+  postrotate
+    /bin/kill -HUP $(cat /var/run/syslogd.pid 2> /dev/null) 2> /dev/null || true
+  endscript
+
+# List of raw rules to define the default policies. This rules will be applied
+# at the begining of the rules file
+
+iptables_default_policies_raw_rules:
+  - "-P INPUT DROP"
+  - "-P FORWARD DROP"
+  - "-P OUTPUT ACCEPT"
+
+# List of raw rules to add to the default INPUT chain. By default allow all
+# traffic from already established sessions and all ICMP traffic
+
+iptables_input_raw_rules:
+  - "-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT"
+  - "-A INPUT -p icmp -m state --state RELATED -j ACCEPT"
+  - "-A INPUT -p icmp -m icmp --icmp-type 4 -j ACCEPT"
+  - "-A INPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT"
+  - "-A INPUT -p icmp -j DROP"
+
+# List of raw rules to add to the default INPUT-LOG chain
+
+iptables_input_log_raw_rules:
+  - >-
+    -A INPUT-LOG
+    -m limit
+    --limit 3/min
+    -m pkttype !
+    --pkt-type multicast
+    -m tcp
+    -p tcp
+    --tcp-flags FIN,SYN,RST,ACK SYN
+    -j LOG
+    --log-level 7
+    --log-prefix "FW denied: "
+    --log-tcp-options
+    --log-ip-options
+  - >-
+    -A INPUT-LOG
+    -m limit
+    --limit 3/min
+    -m pkttype !
+    --pkt-type multicast
+    -m udp
+    -p udp
+    -j LOG
+    --log-level 7
+    --log-prefix "FW denied: "
+    --log-tcp-options
+    --log-ip-options
+  - >-
+    -A INPUT-LOG
+    -j RETURN
+
+# List of raw rules to add to the default OUTPUT chain
+
+iptables_output_raw_rules: []
+
+# List of dicts with the raw rules you want to add to each zone:
+#
+# {
+#   name: <name of the zone>
+#   raw_rules: <list of strings with the raw rules>
+# }
+
+iptables_zones_raw_rules: []
+
+# Indicate if zones list must be loaded also from host variables. Any host
+# variable that begins with "iptables_zone_*" and contains the necessary
+# attributes will be loaded as a zone to manage by the role. The variables must
+# follow the dict structure detailed before for the `iptables_zones` list.
+
+iptables_load_zones_from_hostvars: true
+
+# Indicate if services list must be loaded also from host variables. Any host
+# variable that begins with "services_zone_*" and contains the necessary
+# attributes will be loaded as a service to manage by the role. The variables
+# must follow the dict structure detailed before for the `iptables_services`
+# list.
+
+iptables_load_services_from_hostvars: true
+
+# Proxy settings
+
+iptables_http_proxy: >-
+  {{ ansible_facts.env.http_proxy | default('') }}
+iptables_https_proxy: >-
+  {{ ansible_facts.env.https_proxy | default('') }}
+iptables_no_proxy: >-
+  {{ ansible_facts.env.no_proxy | default('') }}

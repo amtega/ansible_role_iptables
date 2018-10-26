@@ -1,11 +1,4 @@
-/var/log/firewall.log {
-    weekly
-    compress
-    dateext
-    maxage 365
-    notifempty
-    sharedscripts
-    postrotate
-        /bin/kill -HUP $(cat /var/run/syslogd.pid 2> /dev/null) 2> /dev/null || true
-    endscript
-}
+{{ ansible_managed | comment }}
+
+{{ iptables_log_path }} {
+{{ iptables_config_logrotate | indent(width=2, first=true) }}}

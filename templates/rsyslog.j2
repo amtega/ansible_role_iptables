@@ -1,1 +1,3 @@
-:msg,contains,”FW denied:” /var/log/firewall.log
+{{ ansible_managed | comment }}
+
+:msg,contains,”FW denied:” {{ iptables_log_path }}

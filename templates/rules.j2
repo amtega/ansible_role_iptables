@@ -1,0 +1,137 @@
+{{ ansible_managed | comment }}
+
+*filter
+
+#
+# Default policies
+#
+
+{% for rule in iptables_default_policies_raw_rules %}
+{{ rule }}
+{% endfor %}
+
+#
+# Create custom chains
+#
+
+# INPUT
+
+{% for zone in iptables_zones_managed %}
+-N INPUT-{{ zone.name }}
+{% endfor %}
+-N INPUT-DENY
+-N INPUT-LOG
+
+# OUTPUT
+
+{% for zone in iptables_zones_managed %}
+-N OUTPUT-{{ zone.name }}
+{% endfor %}
+-N OUTPUT-DENY
+-N OUPUT-LOG
+
+#
+# Rules for default INPUT chain
+#
+
+# Raw rules
+
+{% for rule in iptables_input_raw_rules %}
+{{ rule }}
+{% endfor %}
+
+# Define jumps for every interface
+
+-A INPUT -i lo -j ACCEPT
+{% for zone in iptables_zones_managed %}
+{% if zone.interfaces is string %}
+-A INPUT -i {{ zone.interfaces }} -j INPUT-{{ zone.name }}
+{% else %}
+{% for interface in zone.interfaces %}
+-A INPUT -i {{ interface }} -j INPUT-{{ zone.name }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+-A INPUT -j INPUT-DENY
+
+#
+# Rules for default OUTPUT chain
+#
+
+# Raw rules
+
+{% for rule in iptables_output_raw_rules %}
+{{ rule }}
+{% endfor %}
+
+# Define jumps for every interface
+
+{% for zone in iptables_zones_managed %}
+{% if zone.interfaces is string %}
+-A OUTPUT -o {{ zone.interfaces }} -j OUTPUT-{{ zone.name }}
+{% else %}
+{% for interface in zone.interfaces %}
+-A OUTPUT -o {{ interface }} -j OUTPUT-{{ zone.name }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% for zone in iptables_zones_managed %}
+
+#
+# Rules for the zone {{ zone.name }}
+#
+
+# Raw rules
+
+{%for item in iptables_zones_raw_rules | selectattr("name", "equalto", zone.name) | list %}
+{% for rule in item.raw_rules %}
+{{ rule }}
+{% endfor %}
+{% endfor %}
+
+# Services rules
+
+{% for service in iptables_services_managed %}
+{% if (service.zones is string and service.zones == zone.name)
+      or zone.name in service.zones %}
+{% if service.source is defined %}
+{% set source_string="-s " + service.source + " " %}
+{% endif %}
+{% if service.ports is number or (service.ports is string and ":" not in service.ports) %}
+{% set ports_string="--dport " + service.ports | string + " " %}
+{% else %}
+{% set ports_string="-m multiport --dports " + service.ports | join(",") + " " %}
+{% endif %}
+-A INPUT-{{ zone.name }} {{ source_string | default("") }}-p {{ service.protocol | default("tcp") }} -m state --state NEW -m {{ service.protocol | default("tcp") }} {{ ports_string | default("")}}-j ACCEPT
+{% endif %}
+{% endfor %}
+{% if zone.log | default(false) %}
+# Log rules
+-A INPUT-{{ zone.name }} -j INPUT-LOG
+{% endif %}
+
+# Deny other input traffic
+
+-A INPUT-{{ zone.name }} -j INPUT-DENY
+
+# Accept all output traffic
+
+-A OUTPUT-{{ zone.name }} -j ACCEPT
+{% endfor %}
+
+#
+# Rules for default INPUT-LOG chain
+#
+
+{% for rule in iptables_input_log_raw_rules %}
+{{ rule }}
+{% endfor %}
+
+#
+# Deny chains
+#
+
+-A INPUT-DENY -j REJECT --reject-with icmp-host-prohibited
+-A OUTPUT-DENY -j REJECT --reject-with icmp-host-prohibited
+
+COMMIT
