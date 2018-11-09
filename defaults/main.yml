@@ -56,9 +56,9 @@ iptables_config_status_verbose: no
 
 iptables_config_status_line_numbers: yes
 
-# Modules to use
+# List of strings with the module names to use
 
-iptables_config_modules:
+iptables_config_modules: []
 
 # Paths to config files
 

@@ -2,7 +2,6 @@
 # Role tasks
 
 - block:
-    - import_tasks: check.yml
     - import_tasks: install.yml
     - import_tasks: configure.yml
     - import_tasks: service.yml
