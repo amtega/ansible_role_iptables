@@ -1,20 +1,6 @@
 ---
 # Role variables
 
-# Supported distributions
-
-iptables_supported_distributions:
-  - centos
-  - fedora
-  - rhel
-
-# Supported distributions versions
-
-iptables_supported_versions:
-  centos: 6
-  fedora: 27
-  rhel: 6
-
 # Operating system packages to install
 
 iptables_os_packages:
@@ -72,16 +58,3 @@ iptables_obsolete_os_packages:
     - firewalld
     - firewalld-filesystem
     - system-config-firewall
-
-# Proxy environment settings
-
-iptables_http_proxy_config:
-    http_proxy: "{{ iptables_http_proxy | default('') }}"
-    https_proxy: "{{ iptables_https_proxy | default('') }}"
-    http_no_proxy: "{{ iptables_no_proxy | default('') }}"
-
-iptables_http_proxy_environment: >-
-  {{ (iptables_http_proxy is defined
-      or iptables_https_proxy is defined
-      or iptables_no_proxy is defined)
-     | ternary(iptables_http_proxy_config, {}) }}

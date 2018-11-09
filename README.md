@@ -17,7 +17,8 @@ A list of all the default variables for this role is available in `defaults/main
 
 ## Dependencies
 
-[amtega.check_platform](https://galaxy.ansible.com/amtega/check_platform)
+- [amtega.check_platform](https://galaxy.ansible.com/amtega/check_platform)
+- [amtega.proxy_client](https://galaxy.ansible.com/amtega/proxy_client). If you need internet access to download packages fill this role variables.
 
 ## Example Playbook
 

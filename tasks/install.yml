@@ -13,7 +13,7 @@
         name: "{{ item }}"
         state: present
       loop: "{{ iptables_os_packages[distro_packages_key] }}"
-  environment: "{{ iptables_http_proxy_environment }}"
+  environment: "{{ proxy_client_environment }}"
   vars:
     distro_packages_key: >-
       {{ ansible_facts.distribution
