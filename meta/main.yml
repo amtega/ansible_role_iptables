@@ -47,14 +47,7 @@ dependencies:
           iptables: present
           rsyslog: present
       fedora:
-        27:
-          firewalld: absent
-          firewalld-filesystem: absent
-          system-config-firewall: absent
-          iptables-services: present
-          iptables: present
-          rsyslog: present
-        28:
+        all:
           firewalld: absent
           firewalld-filesystem: absent
           system-config-firewall: absent
