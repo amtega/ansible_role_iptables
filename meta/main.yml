@@ -30,9 +30,6 @@ dependencies:
       fedora: 27
       rhel: 6
 
-  - role: amtega.proxy_client
-    proxy_client_permanent: false
-
   - role: amtega.packages
     packages_os:
       centos:
