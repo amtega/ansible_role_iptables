@@ -31,3 +31,46 @@ dependencies:
       rhel: 6
 
   - role: amtega.proxy_client
+    proxy_client_permanent: false
+
+  - role: amtega.packages
+    packages_os:
+      centos:
+        6:
+          iptables: present
+          rsyslog: present
+        7:
+          firewalld: absent
+          firewalld-filesystem: absent
+          system-config-firewall: absent
+          iptables-services: present
+          iptables: present
+          rsyslog: present
+      fedora:
+        27:
+          firewalld: absent
+          firewalld-filesystem: absent
+          system-config-firewall: absent
+          iptables-services: present
+          iptables: present
+          rsyslog: present
+        28:
+          firewalld: absent
+          firewalld-filesystem: absent
+          system-config-firewall: absent
+          iptables-services: present
+          iptables: present
+          rsyslog: present
+      rhel:
+        6:
+          iptables: present
+          iptables-ipv6: present
+          rsyslog: present
+        7:
+          firewalld: absent
+          firewalld-filesystem: absent
+          system-config-firewall: absent
+          iptables-services: present
+          iptables: present
+          iptables-ipv6: present
+          rsyslog: present
