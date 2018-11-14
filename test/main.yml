@@ -64,4 +64,5 @@
     - role: amtega.vagrant_sandbox
       vagrant_sandbox_state: absent
   tags:
+    - cleanup
     - sandbox

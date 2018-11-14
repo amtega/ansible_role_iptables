@@ -161,12 +161,3 @@ iptables_load_zones_from_hostvars: true
 # list.
 
 iptables_load_services_from_hostvars: true
-
-# Proxy settings
-
-iptables_http_proxy: >-
-  {{ ansible_facts.env.http_proxy | default('') }}
-iptables_https_proxy: >-
-  {{ ansible_facts.env.https_proxy | default('') }}
-iptables_no_proxy: >-
-  {{ ansible_facts.env.no_proxy | default('') }}
