@@ -6,7 +6,7 @@
 # Default policies
 #
 
-{% for rule in iptables_default_policies_raw_rules %}
+{% for rule in iptables_default_policies_raw_rules_managed %}
 {{ rule }}
 {% endfor %}
 
@@ -36,7 +36,7 @@
 
 # Raw rules
 
-{% for rule in iptables_input_raw_rules %}
+{% for rule in iptables_input_raw_rules_managed %}
 {{ rule }}
 {% endfor %}
 
@@ -60,7 +60,7 @@
 
 # Raw rules
 
-{% for rule in iptables_output_raw_rules %}
+{% for rule in iptables_output_raw_rules_managed %}
 {{ rule }}
 {% endfor %}
 
@@ -83,7 +83,7 @@
 
 # Raw rules
 
-{%for item in iptables_zones_raw_rules | selectattr("name", "equalto", zone.name) | list %}
+{%for item in iptables_zones_raw_rules_managed | selectattr("name", "equalto", zone.name) | list %}
 {% for rule in item.raw_rules %}
 {{ rule }}
 {% endfor %}
@@ -123,7 +123,7 @@
 # Rules for default INPUT-LOG chain
 #
 
-{% for rule in iptables_input_log_raw_rules %}
+{% for rule in iptables_input_log_raw_rules_managed %}
 {{ rule }}
 {% endfor %}
 
