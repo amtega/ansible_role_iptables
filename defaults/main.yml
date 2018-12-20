@@ -7,6 +7,7 @@
 #   name: <name of the zone>
 #   interfaces: <string or list of strings with the zone interfaces>
 #   log: <yes or no to indicate if logging will be done>
+#   raw_rules: <list of strings with the raw rules to apply to this zone>
 # }
 #
 # Sample:
