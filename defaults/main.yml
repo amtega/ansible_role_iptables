@@ -147,17 +147,16 @@ iptables_output_raw_rules: []
 
 iptables_zones_raw_rules: []
 
-# Indicate if zones list must be loaded also from host variables. Any host
-# variable that begins with "iptables_zone_*" and contains the necessary
-# attributes will be loaded as a zone to manage by the role. The variables must
-# follow the dict structure detailed before for the `iptables_zones` list.
+# Indicate if some of the previous variables must be loaded also from host
+# variables. Any host variable that begins with "iptables_<variable>_*" and contains
+# the necessary attributes will be loaded as an item to manage by the role. The
+# variables must follow the structure detailed before for each one.
 
-iptables_load_zones_from_hostvars: true
-
-# Indicate if services list must be loaded also from host variables. Any host
-# variable that begins with "services_zone_*" and contains the necessary
-# attributes will be loaded as a service to manage by the role. The variables
-# must follow the dict structure detailed before for the `iptables_services`
-# list.
-
-iptables_load_services_from_hostvars: true
+iptables_load_zones_from_hostvars: yes
+iptables_load_services_from_hostvars: yes
+iptables_load_config_modules_from_hostvars: yes
+iptables_load_policies_raw_rules_from_hostvars: yes
+iptables_load_input_raw_rules_from_hostvars: yes
+iptables_load_input_log_raw_rules_from_hostvars: yes
+iptables_load_output_raw_rules_from_hostvars: yes
+iptables_load_zones_raw_rules_from_hostvars: yes
