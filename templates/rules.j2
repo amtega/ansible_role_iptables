@@ -6,7 +6,7 @@
 # Default policies
 #
 
-{% for rule in iptables_default_policies_raw_rules_managed %}
+{% for rule in iptables_default_policies_raw_rules_managed | unique %}
 {{ rule }}
 {% endfor %}
 
@@ -16,16 +16,16 @@
 
 # INPUT
 
-{% for zone in iptables_zones_managed %}
--N INPUT-{{ zone.name }}
+{% for zone_name in iptables_zones_managed | map(attribute="name") | list | unique %}
+-N INPUT-{{ zone_name }}
 {% endfor %}
 -N INPUT-DENY
 -N INPUT-LOG
 
 # OUTPUT
 
-{% for zone in iptables_zones_managed %}
--N OUTPUT-{{ zone.name }}
+{% for zone_name in iptables_zones_managed | map(attribute="name") | list | unique %}
+-N OUTPUT-{{ zone_name }}
 {% endfor %}
 -N OUTPUT-DENY
 -N OUPUT-LOG
@@ -36,18 +36,18 @@
 
 # Raw rules
 
-{% for rule in iptables_input_raw_rules_managed %}
+{% for rule in iptables_input_raw_rules_managed | unique %}
 {{ rule }}
 {% endfor %}
 
 # Define jumps for every interface
 
 -A INPUT -i lo -j ACCEPT
-{% for zone in iptables_zones_managed %}
+{% for zone in iptables_zones_managed | iptables_unique(['interfaces', 'name']) %}
 {% if zone.interfaces is string %}
 -A INPUT -i {{ zone.interfaces }} -j INPUT-{{ zone.name }}
 {% else %}
-{% for interface in zone.interfaces %}
+{% for interface in zone.interfaces | unique %}
 -A INPUT -i {{ interface }} -j INPUT-{{ zone.name }}
 {% endfor %}
 {% endif %}
@@ -60,17 +60,17 @@
 
 # Raw rules
 
-{% for rule in iptables_output_raw_rules_managed %}
+{% for rule in iptables_output_raw_rules_managed | unique %}
 {{ rule }}
 {% endfor %}
 
 # Define jumps for every interface
 
-{% for zone in iptables_zones_managed %}
+{% for zone in iptables_zones_managed | iptables_unique(['interfaces', 'name']) %}
 {% if zone.interfaces is string %}
 -A OUTPUT -o {{ zone.interfaces }} -j OUTPUT-{{ zone.name }}
 {% else %}
-{% for interface in zone.interfaces %}
+{% for interface in zone.interfaces | unique %}
 -A OUTPUT -o {{ interface }} -j OUTPUT-{{ zone.name }}
 {% endfor %}
 {% endif %}
@@ -83,15 +83,15 @@
 
 # Raw rules
 
-{%for item in iptables_zones_raw_rules_managed | selectattr("name", "equalto", zone.name) | list %}
-{% for rule in item.raw_rules %}
-{{ rule }}
+{% for grouper, list in iptables_zones_managed | groupby("name") %}
+{% for rule in list | selectattr("raw_rules", "defined") | map(attribute="raw_rules") | list | sum(start=[]) | unique %}
+-A INPUT-{{ zone.name }} {{ rule }}
 {% endfor %}
 {% endfor %}
 
 # Services rules
 
-{% for service in iptables_services_managed %}
+{% for service in iptables_services_managed | iptables_unique(['name', 'zones', 'source', 'ports', 'protocol'], ignore_missing=true) %}
 {% if (service.zones is string and service.zones == zone.name)
       or zone.name in service.zones %}
 {% if service.source is defined %}
@@ -123,7 +123,7 @@
 # Rules for default INPUT-LOG chain
 #
 
-{% for rule in iptables_input_log_raw_rules_managed %}
+{% for rule in iptables_input_log_raw_rules_managed | unique %}
 {{ rule }}
 {% endfor %}
 
