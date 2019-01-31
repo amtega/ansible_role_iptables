@@ -33,7 +33,7 @@ dependencies:
   - role: amtega.packages
     packages_os:
       centos:
-        6:
+        all:
           iptables: present
           rsyslog: present
         7:
@@ -41,8 +41,6 @@ dependencies:
           firewalld-filesystem: absent
           system-config-firewall: absent
           iptables-services: present
-          iptables: present
-          rsyslog: present
       fedora:
         all:
           firewalld: absent
@@ -52,7 +50,7 @@ dependencies:
           iptables: present
           rsyslog: present
       rhel:
-        6:
+        all:
           iptables: present
           iptables-ipv6: present
           rsyslog: present
@@ -61,6 +59,3 @@ dependencies:
           firewalld-filesystem: absent
           system-config-firewall: absent
           iptables-services: present
-          iptables: present
-          iptables-ipv6: present
-          rsyslog: present
