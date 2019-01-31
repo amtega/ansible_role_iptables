@@ -153,11 +153,21 @@ iptables_zones_raw_rules: []
 # the necessary attributes will be loaded as an item to manage by the role. The
 # variables must follow the structure detailed before for each one.
 
-iptables_load_zones_from_hostvars: yes
-iptables_load_services_from_hostvars: yes
-iptables_load_config_modules_from_hostvars: yes
-iptables_load_policies_raw_rules_from_hostvars: yes
-iptables_load_input_raw_rules_from_hostvars: yes
-iptables_load_input_log_raw_rules_from_hostvars: yes
-iptables_load_output_raw_rules_from_hostvars: yes
-iptables_load_zones_raw_rules_from_hostvars: yes
+iptables_load_from_hostvars: yes
+
+iptables_load_zones_from_hostvars: >-
+  {{ iptables_load_from_hostvars }}
+iptables_load_services_from_hostvars: >-
+  {{ iptables_load_from_hostvars }}
+iptables_load_config_modules_from_hostvars: >-
+  {{ iptables_load_from_hostvars }}
+iptables_load_policies_raw_rules_from_hostvars: >-
+  {{ iptables_load_from_hostvars }}
+iptables_load_input_raw_rules_from_hostvars: >-
+  {{ iptables_load_from_hostvars }}
+iptables_load_input_log_raw_rules_from_hostvars: >-
+  {{ iptables_load_from_hostvars }}
+iptables_load_output_raw_rules_from_hostvars: >-
+  {{ iptables_load_from_hostvars }}
+iptables_load_zones_raw_rules_from_hostvars: >-
+  {{ iptables_load_from_hostvars }}
