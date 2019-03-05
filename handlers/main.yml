@@ -2,11 +2,13 @@
 # Role handlers
 
 - name: iptables restore rules
-  shell: iptables-restore {{ iptables_rules_path }}
+  command: iptables-restore {{ iptables_rules_path }}
   listen: restore iptables rules
 
 - name: iptables save rules
   shell: iptables-save > {{ iptables_save_path }}
+  args:
+    warn: no
   listen: save iptables rules
 
 - name: iptables reload service
