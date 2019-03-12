@@ -1,7 +1,7 @@
 ---
 # Tasks for testing role
 
-- name: configure vagrant sandbox environment
+- name: Configure vagrant sandbox environment
   hosts: localhost
   roles:
     - role: amtega.vagrant_presets
@@ -13,7 +13,7 @@
   tags:
     - sandbox
 
-- name: run idempotence test
+- name: Run idempotence test
   hosts: localhost
   roles:
     - role: amtega.vagrant_sandbox
@@ -21,10 +21,10 @@
   tags:
     - sandbox
 
-- name: prepare some variables required by the tests
+- name: Prepare some variables required by the tests
   hosts: vagrant_sandbox_vms
   tasks:
-    - name: setup some variables required by tests
+    - name: Setup some variables required by tests
       set_fact:
         iptables_zone_SERVICE:
           name: SERVICE
@@ -37,7 +37,7 @@
   tags:
     - idempotence
 
-- name: test iptables role
+- name: Test iptables role
   hosts: vagrant_sandbox_vms
   roles:
     - role: amtega.iptables
@@ -58,7 +58,7 @@
   tags:
     - idempotence
 
-- name: cleanup vagrant sandbox
+- name: Cleanup vagrant sandbox
   hosts: localhost
   roles:
     - role: amtega.vagrant_sandbox

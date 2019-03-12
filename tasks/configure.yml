@@ -2,19 +2,7 @@
 # Role configure tasks
 
 - block:
-    - name: setup fact with zones loaded from host variables
-      include_role:
-        name: amtega.select_hostvars
-        apply:
-          tags:
-            - role::iptables
-            - role::iptables::configure
-      vars:
-        select_hostvars_pattern: "^iptables_zones_.*"
-        select_hostvars_fact_name: iptables_hostvars_zones
-        select_hostvars_output_type: list
-
-    - name: setup fact with zones that will be managed
+    - name: Setup facts items that will be managed
       set_fact:
         iptables_zones_managed: >-
           {{ (iptables_load_zones_from_hostvars
@@ -23,41 +11,12 @@
                         + iptables_zones,
                         iptables_zones) }}
 
-    - name: setup fact with services loaded from host variables
-      include_role:
-        name: amtega.select_hostvars
-        apply:
-          tags:
-            - role::iptables
-            - role::iptables::configure
-      vars:
-        select_hostvars_pattern: "^iptables_services_.*"
-        select_hostvars_fact_name: iptables_hostvars_services
-        select_hostvars_output_type: list
-
-    - name: setup fact with services that will be managed
-      set_fact:
         iptables_services_managed: >-
           {{ (iptables_load_services_from_hostvars
               and not iptables_hostvars_services is string)
               | ternary([ iptables_hostvars_services ] | flatten
                         + iptables_services,
                         iptables_services) }}
-
-    - name: setup fact with config modules loaded from host variables
-      include_role:
-        name: amtega.select_hostvars
-        apply:
-          tags:
-            - role::iptables
-            - role::iptables::configure
-      vars:
-        select_hostvars_pattern: "^iptables_config_modules_.*"
-        select_hostvars_fact_name: iptables_hostvars_config_modules
-        select_hostvars_output_type: list
-
-    - name: setup fact with config modules that will be managed
-      set_fact:
         iptables_config_modules_managed: >-
           {{ (iptables_load_config_modules_from_hostvars
               and not iptables_hostvars_config_modules is string)
@@ -65,23 +24,6 @@
                         + iptables_config_modules,
                         iptables_hostvars_config_modules) }}
 
-    - debug: var=iptables_config_modules_managed
-
-    - name: >-
-        setup fact with default policies raw rules loaded from host variables
-      include_role:
-        name: amtega.select_hostvars
-        apply:
-          tags:
-            - role::iptables
-            - role::iptables::configure
-      vars:
-        select_hostvars_pattern: "^iptables_default_policies_raw_rules_.*"
-        select_hostvars_fact_name: iptables_hostvars_policies_raw_rules
-        select_hostvars_output_type: list
-
-    - name: setup fact with default policies raw rules that will be managed
-      set_fact:
         iptables_default_policies_raw_rules_managed: >-
           {{ (iptables_load_policies_raw_rules_from_hostvars
               and not iptables_hostvars_policies_raw_rules is string)
@@ -89,20 +31,6 @@
                         + iptables_default_policies_raw_rules,
                         iptables_default_policies_raw_rules) }}
 
-    - name: setup fact with input raw rules loaded from host variables
-      include_role:
-        name: amtega.select_hostvars
-        apply:
-          tags:
-            - role::iptables
-            - role::iptables::configure
-      vars:
-        select_hostvars_pattern: "^iptables_input_raw_rules.*"
-        select_hostvars_fact_name: iptables_hostvars_input_raw_rules
-        select_hostvars_output_type: list
-
-    - name: setup fact with input raw rules that will be managed
-      set_fact:
         iptables_input_raw_rules_managed: >-
           {{ (iptables_load_input_raw_rules_from_hostvars
               and not iptables_hostvars_input_raw_rules is string)
@@ -110,20 +38,6 @@
                         + iptables_input_raw_rules,
                         iptables_input_raw_rules) }}
 
-    - name: setup fact with input log raw rules loaded from host variables
-      include_role:
-        name: amtega.select_hostvars
-        apply:
-          tags:
-            - role::iptables
-            - role::iptables::configure
-      vars:
-        select_hostvars_pattern: "^iptables_input_log_raw_rules_.*"
-        select_hostvars_fact_name: iptables_hostvars_input_log_raw_rules
-        select_hostvars_output_type: list
-
-    - name: setup fact with log raw rules that will be managed
-      set_fact:
         iptables_input_log_raw_rules_managed: >-
           {{ (iptables_load_input_log_raw_rules_from_hostvars
               and not iptables_hostvars_input_log_raw_rules is string)
@@ -131,20 +45,6 @@
                         + iptables_input_log_raw_rules,
                         iptables_input_log_raw_rules) }}
 
-    - name: setup fact with output raw rules loaded from host variables
-      include_role:
-        name: amtega.select_hostvars
-        apply:
-          tags:
-            - role::iptables
-            - role::iptables::configure
-      vars:
-        select_hostvars_pattern: "^iptables_output_raw_rules_.*"
-        select_hostvars_fact_name: iptables_hostvars_output_raw_rules
-        select_hostvars_output_type: list
-
-    - name: setup fact with output raw rules that will be managed
-      set_fact:
         iptables_output_raw_rules_managed: >-
           {{ (iptables_load_output_raw_rules_from_hostvars
               and not iptables_hostvars_output_raw_rules is string)
@@ -152,20 +52,6 @@
                         + iptables_output_raw_rules,
                         iptables_output_raw_rules) }}
 
-    - name: setup fact with zones raw rules loaded from host variables
-      include_role:
-        name: amtega.select_hostvars
-        apply:
-          tags:
-            - role::iptables
-            - role::iptables::configure
-      vars:
-        select_hostvars_pattern: "^iptables_zone_raw_rules_.*"
-        select_hostvars_fact_name: iptables_hostvars_zones_raw_rules
-        select_hostvars_output_type: list
-
-    - name: setup fact with zones raw rules that will be managed
-      set_fact:
         iptables_zones_raw_rules_managed: >-
           {{ (iptables_load_zones_raw_rules_from_hostvars
               and not iptables_hostvars_output_raw_rules is string)
@@ -173,14 +59,14 @@
                         + iptables_zones_raw_rules,
                         iptables_zones_raw_rules) }}
 
-    - name: create iptables configuration file
+    - name: Create iptables configuration file
       template:
         src: config.j2
         dest: "{{ iptables_config_path }}"
       notify:
         - reload iptables service
 
-    - name: create iptables rules file
+    - name: Create iptables rules file
       template:
         src: rules.j2
         dest: "{{ iptables_rules_path }}"
@@ -189,14 +75,14 @@
         - save iptables rules
         - reload iptables service
 
-    - name: create rsyslog configuration file
+    - name: Create rsyslog configuration file
       template:
         src: rsyslog.j2
         dest: "{{ iptables_rsyslog_config_path }}"
       notify:
         - reload rsyslog service
 
-    - name: create logrotate configuration file
+    - name: Create logrotate configuration file
       template:
         src: logrotate.j2
         dest: "{{ iptables_logrotate_config_path }}"
