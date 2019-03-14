@@ -2,72 +2,6 @@
 # Role configure tasks
 
 - block:
-    - name: Setup facts items that will be managed
-      set_fact:
-        iptables_zones_managed: >-
-          {{ iptables_zones
-             + ((iptables_load_zones_from_hostvars)
-                | ternary(iptables_hostvars_zones
-                          | default([])
-                          | flatten,
-                          [])) }}
-
-        iptables_services_managed: >-
-          {{ iptables_services
-             + ((iptables_load_services_from_hostvars)
-                | ternary(iptables_hostvars_services
-                          | default([])
-                          | flatten,
-                          [])) }}
-
-        iptables_config_modules_managed: >-
-          {{ iptables_config_modules
-             + ((iptables_load_config_modules_from_hostvars)
-                | ternary(iptables_hostvars_config_modules
-                          | default([])
-                          | flatten,
-                          [])) }}
-
-        iptables_default_policies_raw_rules_managed: >-
-          {{ iptables_default_policies_raw_rules
-             + ((iptables_load_policies_raw_rules_from_hostvars)
-                | ternary(iptables_hostvars_policies_raw_rules
-                          | default([])
-                          | flatten,
-                          [])) }}
-
-        iptables_input_raw_rules_managed: >-
-          {{ iptables_input_raw_rules
-             + ((iptables_load_input_raw_rules_from_hostvars)
-                | ternary(iptables_hostvars_input_raw_rules
-                          | default([])
-                          | flatten,
-                          [])) }}
-
-        iptables_input_log_raw_rules_managed: >-
-          {{ iptables_input_log_raw_rules
-             + ((iptables_load_input_log_raw_rules_from_hostvars)
-                | ternary(iptables_hostvars_input_log_raw_rules
-                          | default([])
-                          | flatten,
-                          [])) }}
-
-        iptables_output_raw_rules_managed: >-
-          {{ iptables_output_raw_rules
-             + ((iptables_load_output_raw_rules_from_hostvars)
-                | ternary(iptables_hostvars_output_raw_rules
-                          | default([])
-                          | flatten,
-                          [])) }}
-
-        iptables_zones_raw_rules_managed: >-
-          {{ iptables_zones_raw_rules
-             + ((iptables_load_zones_raw_rules_from_hostvars)
-                | ternary(iptables_hostvars_zones_raw_rules
-                          | default([])
-                          | flatten,
-                          [])) }}
-
     - name: Create iptables configuration file
       template:
         src: config.j2
@@ -95,6 +29,70 @@
       template:
         src: logrotate.j2
         dest: "{{ iptables_logrotate_config_path }}"
+  vars:
+    iptables_zones_managed: >-
+      {{ iptables_zones
+         + ((iptables_load_zones_from_hostvars)
+            | ternary(iptables_hostvars_zones
+                      | default([])
+                      | flatten,
+                      [])) }}
+
+    iptables_services_managed: >-
+      {{ iptables_services
+         + ((iptables_load_services_from_hostvars)
+            | ternary(iptables_hostvars_services
+                      | default([])
+                      | flatten,
+                      [])) }}
+
+    iptables_config_modules_managed: >-
+      {{ iptables_config_modules
+         + ((iptables_load_config_modules_from_hostvars)
+            | ternary(iptables_hostvars_config_modules
+                      | default([])
+                      | flatten,
+                      [])) }}
+
+    iptables_default_policies_raw_rules_managed: >-
+      {{ iptables_default_policies_raw_rules
+         + ((iptables_load_policies_raw_rules_from_hostvars)
+            | ternary(iptables_hostvars_policies_raw_rules
+                      | default([])
+                      | flatten,
+                      [])) }}
+
+    iptables_input_raw_rules_managed: >-
+      {{ iptables_input_raw_rules
+         + ((iptables_load_input_raw_rules_from_hostvars)
+            | ternary(iptables_hostvars_input_raw_rules
+                      | default([])
+                      | flatten,
+                      [])) }}
+
+    iptables_input_log_raw_rules_managed: >-
+      {{ iptables_input_log_raw_rules
+         + ((iptables_load_input_log_raw_rules_from_hostvars)
+            | ternary(iptables_hostvars_input_log_raw_rules
+                      | default([])
+                      | flatten,
+                      [])) }}
+
+    iptables_output_raw_rules_managed: >-
+      {{ iptables_output_raw_rules
+         + ((iptables_load_output_raw_rules_from_hostvars)
+            | ternary(iptables_hostvars_output_raw_rules
+                      | default([])
+                      | flatten,
+                      [])) }}
+
+    iptables_zones_raw_rules_managed: >-
+      {{ iptables_zones_raw_rules
+         + ((iptables_load_zones_raw_rules_from_hostvars)
+            | ternary(iptables_hostvars_zones_raw_rules
+                      | default([])
+                      | flatten,
+                      [])) }}
   tags:
     - role::iptables
     - role::iptables::configure
