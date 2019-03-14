@@ -5,59 +5,68 @@
     - name: Setup facts items that will be managed
       set_fact:
         iptables_zones_managed: >-
-          {{ (iptables_load_zones_from_hostvars
-              and not iptables_hostvars_zones is string)
-              | ternary([ iptables_hostvars_zones ] | flatten
-                        + iptables_zones,
-                        iptables_zones) }}
+          {{ iptables_zones
+             + ((iptables_load_zones_from_hostvars)
+                | ternary(iptables_hostvars_zones
+                          | default([])
+                          | flatten,
+                          [])) }}
 
         iptables_services_managed: >-
-          {{ (iptables_load_services_from_hostvars
-              and not iptables_hostvars_services is string)
-              | ternary([ iptables_hostvars_services ] | flatten
-                        + iptables_services,
-                        iptables_services) }}
+          {{ iptables_services
+             + ((iptables_load_services_from_hostvars)
+                | ternary(iptables_hostvars_services
+                          | default([])
+                          | flatten,
+                          [])) }}
+
         iptables_config_modules_managed: >-
-          {{ (iptables_load_config_modules_from_hostvars
-              and not iptables_hostvars_config_modules is string)
-              | ternary([ iptables_hostvars_config_modules ] | flatten
-                        + iptables_config_modules,
-                        iptables_hostvars_config_modules) }}
+          {{ iptables_config_modules
+             + ((iptables_load_config_modules_from_hostvars)
+                | ternary(iptables_hostvars_config_modules
+                          | default([])
+                          | flatten,
+                          [])) }}
 
         iptables_default_policies_raw_rules_managed: >-
-          {{ (iptables_load_policies_raw_rules_from_hostvars
-              and not iptables_hostvars_policies_raw_rules is string)
-              | ternary([ iptables_hostvars_policies_raw_rules ] | flatten
-                        + iptables_default_policies_raw_rules,
-                        iptables_default_policies_raw_rules) }}
+          {{ iptables_default_policies_raw_rules
+             + ((iptables_load_policies_raw_rules_from_hostvars)
+                | ternary(iptables_hostvars_policies_raw_rules
+                          | default([])
+                          | flatten,
+                          [])) }}
 
         iptables_input_raw_rules_managed: >-
-          {{ (iptables_load_input_raw_rules_from_hostvars
-              and not iptables_hostvars_input_raw_rules is string)
-              | ternary([ iptables_hostvars_input_raw_rules ] | flatten
-                        + iptables_input_raw_rules,
-                        iptables_input_raw_rules) }}
+          {{ iptables_input_raw_rules
+             + ((iptables_load_input_raw_rules_from_hostvars)
+                | ternary(iptables_hostvars_input_raw_rules
+                          | default([])
+                          | flatten,
+                          [])) }}
 
         iptables_input_log_raw_rules_managed: >-
-          {{ (iptables_load_input_log_raw_rules_from_hostvars
-              and not iptables_hostvars_input_log_raw_rules is string)
-              | ternary([ iptables_hostvars_input_log_raw_rules ] | flatten
-                        + iptables_input_log_raw_rules,
-                        iptables_input_log_raw_rules) }}
+          {{ iptables_input_log_raw_rules
+             + ((iptables_load_input_log_raw_rules_from_hostvars)
+                | ternary(iptables_hostvars_input_log_raw_rules
+                          | default([])
+                          | flatten,
+                          [])) }}
 
         iptables_output_raw_rules_managed: >-
-          {{ (iptables_load_output_raw_rules_from_hostvars
-              and not iptables_hostvars_output_raw_rules is string)
-              | ternary([ iptables_hostvars_output_raw_rules ] | flatten
-                        + iptables_output_raw_rules,
-                        iptables_output_raw_rules) }}
+          {{ iptables_output_raw_rules
+             + ((iptables_load_output_raw_rules_from_hostvars)
+                | ternary(iptables_hostvars_output_raw_rules
+                          | default([])
+                          | flatten,
+                          [])) }}
 
         iptables_zones_raw_rules_managed: >-
-          {{ (iptables_load_zones_raw_rules_from_hostvars
-              and not iptables_hostvars_output_raw_rules is string)
-              | ternary([ iptables_hostvars_zones_raw_rules ] | flatten
-                        + iptables_zones_raw_rules,
-                        iptables_zones_raw_rules) }}
+          {{ iptables_zones_raw_rules
+             + ((iptables_load_zones_raw_rules_from_hostvars)
+                | ternary(iptables_hostvars_zones_raw_rules
+                          | default([])
+                          | flatten,
+                          [])) }}
 
     - name: Create iptables configuration file
       template:
