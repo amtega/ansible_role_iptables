@@ -1,10 +1,6 @@
-# amtega.iptables
+# Ansible amtega.iptables role
 
 This is an [Ansible](http://www.ansible.com) role to configure an iptables based firewall segmented by zones.
-
-## Requirements
-
-[Ansible 2.7+](http://docs.ansible.com/ansible/latest/intro_installation.html)
 
 ## Role Variables
 
@@ -14,12 +10,6 @@ A list of all the default variables for this role is available in `defaults/main
 - iptables_zones_managed: list of zones managed by the role.
 - iptables_hostvars_services: list of services loaded from host vars.
 - iptables_services_managed: list of services managed by the role.
-
-## Dependencies
-
-- [amtega.check_platform](https://galaxy.ansible.com/amtega/check_platform)
-- [amtega.packages](https://galaxy.ansible.com/amtega/packages)
-- [amtega.select_hostvars](https://galaxy.ansible.com/amtega/select_hostvars)
 
 ## Example Playbook
 
@@ -63,7 +53,7 @@ $ ansible-playbook main.yml
 
 ## License
 
-Copyright (C) 2018 AMTEGA - Xunta de Galicia
+Copyright (C) 2019 AMTEGA - Xunta de Galicia
 
 This role is free software: you can redistribute it and/or modify it under the terms of:
 

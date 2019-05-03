@@ -2,8 +2,19 @@
 # Role tasks
 
 - block:
-    - import_tasks: configure.yml
-    - import_tasks: service.yml
-    - import_tasks: cleanup.yml
+    - include_tasks: configure.yml
+      tags:
+        - role::iptables
+        - role::iptables::configure
+
+    - include_tasks: service.yml
+      tags:
+        - role::iptables
+        - role::iptables::service
+
+    - include_tasks: cleanup.yml
+      tags:
+        - role::iptables
+        - role::iptables::cleanup
   tags:
     - role::iptables
