@@ -72,7 +72,7 @@ dependencies:
         pattern: "^iptables_zones_.*"
         fact_name: iptables_hostvars_zones
         output_type: list
-    when: iptables_load_zones_from_hostvars
+    when: iptables_load_zones_from_hostvars | bool
     tags:
       - role::iptables
 
@@ -82,7 +82,7 @@ dependencies:
         pattern: "^iptables_services_.*"
         fact_name: iptables_hostvars_services
         output_type: list
-    when: iptables_load_services_from_hostvars
+    when: iptables_load_services_from_hostvars  | bool
     tags:
       - role::iptables
 
@@ -92,7 +92,7 @@ dependencies:
         pattern: "^iptables_config_modules_.*"
         fact_name: iptables_hostvars_config_modules
         output_type: list
-    when: iptables_load_config_modules_from_hostvars
+    when: iptables_load_config_modules_from_hostvars  | bool
     tags:
       - role::iptables
 
@@ -102,7 +102,7 @@ dependencies:
         pattern: "^iptables_default_policies_raw_rules_.*"
         fact_name: iptables_hostvars_policies_raw_rules
         output_type: list
-    when: iptables_load_policies_raw_rules_from_hostvars
+    when: iptables_load_policies_raw_rules_from_hostvars | bool
     tags:
       - role::iptables
 
@@ -112,7 +112,7 @@ dependencies:
         pattern: "^iptables_input_raw_rules.*"
         fact_name: iptables_hostvars_input_raw_rules
         output_type: list
-    when: iptables_load_input_raw_rules_from_hostvars
+    when: iptables_load_input_raw_rules_from_hostvars | bool
     tags:
       - role::iptables
 
@@ -122,7 +122,7 @@ dependencies:
         pattern: "^iptables_input_log_raw_rules_.*"
         fact_name: iptables_hostvars_input_log_raw_rules
         output_type: list
-    when: iptables_load_input_log_raw_rules_from_hostvars
+    when: iptables_load_input_log_raw_rules_from_hostvars | bool
     tags:
       - role::iptables
 
@@ -132,7 +132,7 @@ dependencies:
         pattern: "^iptables_output_raw_rules_.*"
         fact_name: iptables_hostvars_output_raw_rules
         output_type: list
-    when: iptables_load_output_raw_rules_from_hostvars
+    when: iptables_load_output_raw_rules_from_hostvars | bool
     tags:
       - role::iptables
 
@@ -142,6 +142,6 @@ dependencies:
         pattern: "^iptables_zone_raw_rules_.*"
         fact_name: iptables_hostvars_zones_raw_rules
         output_type: list
-    when: iptables_load_zones_raw_rules_from_hostvars
+    when: iptables_load_zones_raw_rules_from_hostvars | bool
     tags:
       - role::iptables
