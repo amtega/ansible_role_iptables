@@ -2,11 +2,11 @@
 # Role handlers
 
 - name: Iptables restore rules
-  command: iptables-restore {{ iptables_rules_path }}
+  command: /usr/sbin/iptables-restore {{ iptables_rules_path }}
   listen: restore iptables rules
 
 - name: Iptables save rules
-  shell: iptables-save > {{ iptables_save_path }}
+  shell: /usr/sbin/iptables-save > {{ iptables_save_path }}
   args:
     warn: no
   listen: save iptables rules
