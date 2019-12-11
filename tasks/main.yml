@@ -1,6 +1,118 @@
 ---
 # Role tasks
 
+- include_role:
+    name: amtega.check_platform
+  vars:
+    check_platform_distributions:
+      centos: 6
+      fedora: 27
+      rhel: 6
+
+- include_role:
+    name: amtega.packages
+  vars:
+    packages_os:
+      centos:
+        all:
+          iptables: present
+          rsyslog: present
+        7:
+          firewalld: absent
+          firewalld-filesystem: absent
+          system-config-firewall: absent
+          iptables-services: present
+      fedora:
+        all:
+          firewalld: absent
+          firewalld-filesystem: absent
+          system-config-firewall: absent
+          iptables-services: present
+          iptables: present
+          rsyslog: present
+      rhel:
+        all:
+          iptables: present
+          iptables-ipv6: present
+          rsyslog: present
+        7:
+          firewalld: absent
+          firewalld-filesystem: absent
+          system-config-firewall: absent
+          iptables-services: present
+
+- include_role:
+    name: amtega.select_hostvars
+  vars:
+    select_hostvars_query:
+      pattern: "^iptables_zones_.*"
+      fact_name: iptables_hostvars_zones
+      output_type: list
+  when: iptables_load_zones_from_hostvars | bool
+
+- include_role:
+    name: amtega.select_hostvars
+  vars:
+    select_hostvars_query:
+      pattern: "^iptables_services_.*"
+      fact_name: iptables_hostvars_services
+      output_type: list
+  when: iptables_load_services_from_hostvars  | bool
+
+- include_role:
+    name: amtega.select_hostvars
+  vars:
+    select_hostvars_query:
+      pattern: "^iptables_config_modules_.*"
+      fact_name: iptables_hostvars_config_modules
+      output_type: list
+  when: iptables_load_config_modules_from_hostvars  | bool
+
+- include_role:
+    name: amtega.select_hostvars
+  vars:
+    select_hostvars_query:
+      pattern: "^iptables_default_policies_raw_rules_.*"
+      fact_name: iptables_hostvars_policies_raw_rules
+      output_type: list
+  when: iptables_load_policies_raw_rules_from_hostvars | bool
+
+- include_role:
+    name: amtega.select_hostvars
+  vars:
+    select_hostvars_query:
+      pattern: "^iptables_input_raw_rules.*"
+      fact_name: iptables_hostvars_input_raw_rules
+      output_type: list
+  when: iptables_load_input_raw_rules_from_hostvars | bool
+
+- include_role:
+    name: amtega.select_hostvars
+  vars:
+    select_hostvars_query:
+      pattern: "^iptables_input_log_raw_rules_.*"
+      fact_name: iptables_hostvars_input_log_raw_rules
+      output_type: list
+  when: iptables_load_input_log_raw_rules_from_hostvars | bool
+
+- include_role:
+    name: amtega.select_hostvars
+  vars:
+    select_hostvars_query:
+      pattern: "^iptables_output_raw_rules_.*"
+      fact_name: iptables_hostvars_output_raw_rules
+      output_type: list
+  when: iptables_load_output_raw_rules_from_hostvars | bool
+
+- include_role:
+    name: amtega.select_hostvars
+  vars:
+    select_hostvars_query:
+      pattern: "^iptables_zone_raw_rules_.*"
+      fact_name: iptables_hostvars_zones_raw_rules
+      output_type: list
+  when: iptables_load_zones_raw_rules_from_hostvars | bool
+
 - block:
     - include_tasks: configure.yml
       tags:
