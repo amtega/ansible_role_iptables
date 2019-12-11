@@ -75,25 +75,25 @@
 {% endfor %}
 {% endif %}
 {% endfor %}
-{% for zone in iptables_zones_managed %}
+{% for zone_grouper, zone_list in iptables_zones_managed | groupby("name") %}
 
 #
-# Rules for the zone {{ zone.name }}
+# Rules for the zone {{ zone_grouper }}
 #
 
 # Raw rules
 
 {% for grouper, list in iptables_zones_managed | groupby("name") %}
 {% for rule in list | selectattr("raw_rules", "defined") | map(attribute="raw_rules") | list | sum(start=[]) | unique %}
--A INPUT-{{ zone.name }} {{ rule }}
+-A INPUT-{{ zone_grouper }} {{ rule }}
 {% endfor %}
 {% endfor %}
 
 # Services rules
 
 {% for service in iptables_services_managed | iptables_unique(['name', 'zones', 'source', 'ports', 'protocol'], ignore_missing=true) %}
-{% if (service.zones is string and service.zones == zone.name)
-      or zone.name in service.zones %}
+{% if (service.zones is string and service.zones == zone_grouper)
+      or zone_grouper in service.zones %}
 {% if service.source is defined %}
 {% set source_string="-s " + service.source + " " %}
 {% endif %}
@@ -102,21 +102,21 @@
 {% else %}
 {% set ports_string="-m multiport --dports " + service.ports | join(",") + " " %}
 {% endif %}
--A INPUT-{{ zone.name }} {{ source_string | default("") }}-p {{ service.protocol | default("tcp") }} -m state --state NEW -m {{ service.protocol | default("tcp") }} {{ ports_string | default("")}}-j ACCEPT
+-A INPUT-{{ zone_grouper }} {{ source_string | default("") }}-p {{ service.protocol | default("tcp") }} -m state --state NEW -m {{ service.protocol | default("tcp") }} {{ ports_string | default("")}}-j ACCEPT
 {% endif %}
 {% endfor %}
-{% if zone.log | default(false) %}
+{% if iptables_zones_managed | selectattr("name", "equalto", zone_grouper) | selectattr("zone", "defined") | selectattr("zone", "equalto", true) | list | length > 0 %}
 # Log rules
--A INPUT-{{ zone.name }} -j INPUT-LOG
+-A INPUT-{{ zone_grouper }} -j INPUT-LOG
 {% endif %}
 
 # Deny other input traffic
 
--A INPUT-{{ zone.name }} -j INPUT-DENY
+-A INPUT-{{ zone_grouper }} -j INPUT-DENY
 
 # Accept all output traffic
 
--A OUTPUT-{{ zone.name }} -j ACCEPT
+-A OUTPUT-{{ zone_grouper }} -j ACCEPT
 {% endfor %}
 
 #
