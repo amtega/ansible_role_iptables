@@ -2,14 +2,22 @@
 # Role handlers
 
 - name: Iptables restore rules
-  command: /usr/sbin/iptables-restore {{ iptables_rules_path }}
+  command: "{{ iptables_restore_cmd }} {{ iptables_rules_path }}"
   listen: restore iptables rules
+  vars:
+    iptables_restore_cmd: >-
+      {{ (ansible_facts.distribution_major_version is version("6", ">")
+         | ternary("/usr/sbin/iptables-restore", "/sbin/iptables-restore")) }}
 
 - name: Iptables save rules
-  shell: /usr/sbin/iptables-save > {{ iptables_save_path }}
+  shell: "{{ iptables_save_cmd }} > {{ iptables_save_path }}"
   args:
     warn: no
   listen: save iptables rules
+  vars:
+    iptables_save_cmd: >-
+      {{ (ansible_facts.distribution_major_version is version("6", ">")
+         | ternary("/usr/sbin/iptables-save", "/sbin/iptables-save")) }}
 
 - name: Iptables reload service
   service:

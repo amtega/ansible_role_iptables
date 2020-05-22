@@ -26,11 +26,11 @@
   tasks:
     - name: Setup some variables required by tests
       set_fact:
-        iptables_zone_SERVICE:
+        iptables_zones_SERVICE:
           name: SERVICE
           interfaces: eth0
           log: yes
-        iptables_service_ss:
+        iptables_services_ssh:
           name: ssh
           ports: 22
           zones: SERVICE
