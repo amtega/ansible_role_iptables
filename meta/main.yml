@@ -29,7 +29,7 @@ dependencies:
       check_platform_distributions:
         centos: 6
         fedora: 27
-        rhel: 6
+        redhat: 6
 
   - role: amtega.packages
     vars:
@@ -51,7 +51,7 @@ dependencies:
             iptables-services: present
             iptables: present
             rsyslog: present
-        rhel:
+        redhat:
           all:
             iptables: present
             iptables-ipv6: present
