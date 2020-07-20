@@ -25,7 +25,7 @@
       notify:
         - reload rsyslog service
 
-    - name: Create log file if not exsist
+    - name: Setup log file
       file:
         path: "{{ iptables_log_path }}"
         state: touch

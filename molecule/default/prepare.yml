@@ -1,0 +1,9 @@
+---
+
+- name: Prepare
+  hosts: molecule_hosts_centos_6
+  gather_facts: no
+  become: yes
+  tasks:
+    - name: Setup python for ansible
+      raw: yum install -y libselinux-python
