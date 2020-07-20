@@ -105,7 +105,7 @@
 -A INPUT-{{ zone_grouper }} {{ source_string | default("") }}-p {{ service.protocol | default("tcp") }} -m state --state NEW -m {{ service.protocol | default("tcp") }} {{ ports_string | default("")}}-j ACCEPT
 {% endif %}
 {% endfor %}
-{% if iptables_zones_managed | selectattr("name", "equalto", zone_grouper) | selectattr("zone", "defined") | selectattr("zone", "equalto", true) | list | length > 0 %}
+{% if iptables_zones_managed | selectattr("name", "equalto", zone_grouper) | selectattr("log", "defined") | selectattr("log", "equalto", true) | list | length > 0 %}
 # Log rules
 -A INPUT-{{ zone_grouper }} -j INPUT-LOG
 {% endif %}
