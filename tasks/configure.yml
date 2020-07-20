@@ -25,6 +25,14 @@
       notify:
         - reload rsyslog service
 
+    - name: Create log file if not exsist
+      file:
+        path: "{{ iptables_log_path }}"
+        state: touch
+        mode: u+rw,g+r
+        modification_time: preserve
+        access_time: preserve
+
     - name: Create logrotate configuration file
       template:
         src: logrotate.j2
