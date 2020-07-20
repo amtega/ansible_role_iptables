@@ -2,9 +2,6 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-from datetime import datetime
-from random import randint, seed
-
 
 def iptables_attrs_subset(d, attributes, ignore_missing=False):
     """Extract a list of attributes from a dict.
