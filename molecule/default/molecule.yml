@@ -26,12 +26,15 @@ lint: |
   export ANSIBLE_TEST_PLUGINS=$PWD/test_plugins
   export ANSIBLE_VARS_PLUGINS=$PWD/vars_plugins
   yamllint .
-  ansible-lint
+  ansible-lint .
   flake8
 platforms:
   - name: "centos6-${INSTANCE_UUID:-1}"
     box: centos/6
     memory: 1024
+    interfaces:
+      - network_name: private_network
+        ip: 192.168.50.4
     groups:
       - molecule_hosts
       - molecule_hosts_centos
@@ -39,6 +42,9 @@ platforms:
   - name: "centos7-${INSTANCE_UUID:-1}"
     box: centos/7
     memory: 1024
+    interfaces:
+      - network_name: private_network
+        ip: 192.168.50.5
     groups:
       - molecule_hosts
       - molecule_hosts_centos
@@ -46,6 +52,9 @@ platforms:
   - name: "fedora29-${INSTANCE_UUID:-1}"
     box: fedora/29-cloud-base
     memory: 1024
+    interfaces:
+      - network_name: private_network
+        ip: 192.168.50.6
     groups:
       - molecule_hosts
       - molecule_hosts_fedora
@@ -53,6 +62,9 @@ platforms:
   - name: "fedora30-${INSTANCE_UUID:-1}"
     box: fedora/30-cloud-base
     memory: 1024
+    interfaces:
+      - network_name: private_network
+        ip: 192.168.50.7
     groups:
       - molecule_hosts
       - molecule_hosts_fedora
@@ -71,10 +83,20 @@ provisioner:
             name: SERVICE
             interfaces: eth0
             log: yes
+            raw_rules:
+              - "-m pkttype --pkt-type multicast -j ACCEPT"
+          iptables_zones_MANAGEMENT:
+            name: MANAGEMENT
+            interfaces: eth0
+            log: yes
+            raw_rules:
+              - "-m pkttype --pkt-type multicast -j REJECT"
           iptables_services_ssh:
             name: ssh
             ports: 22
-            zones: SERVICE
+            zones:
+              - SERVICE
+              - MANAGEMENT
           iptables_services:
             - name: http
               protocol: tcp

@@ -16,7 +16,7 @@
 
 # INPUT
 
-{% for zone_name in iptables_zones_managed | map(attribute="name") | list | unique %}
+{% for zone_name in iptables_zones_managed | map(attribute="name") | list | sort | unique %}
 -N INPUT-{{ zone_name }}
 {% endfor %}
 -N INPUT-DENY
@@ -24,7 +24,7 @@
 
 # OUTPUT
 
-{% for zone_name in iptables_zones_managed | map(attribute="name") | list | unique %}
+{% for zone_name in iptables_zones_managed | map(attribute="name") | list | sort | unique %}
 -N OUTPUT-{{ zone_name }}
 {% endfor %}
 -N OUTPUT-DENY
@@ -43,7 +43,7 @@
 # Define jumps for every interface
 
 -A INPUT -i lo -j ACCEPT
-{% for zone in iptables_zones_managed | iptables_unique(['interfaces', 'name']) %}
+{% for zone in iptables_zones_managed | iptables_unique(['interfaces', 'name']) | sort(attribute="name") %}
 {% if zone.interfaces is string %}
 -A INPUT -i {{ zone.interfaces }} -j INPUT-{{ zone.name }}
 {% else %}
@@ -83,11 +83,10 @@
 
 # Raw rules
 
-{% for grouper, list in iptables_zones_managed | groupby("name") %}
-{% for rule in list | selectattr("raw_rules", "defined") | map(attribute="raw_rules") | list | sum(start=[]) | unique %}
+{% for rule in zone_list | selectattr("raw_rules", "defined") | map(attribute="raw_rules") | list | sum(start=[]) | unique %}
 -A INPUT-{{ zone_grouper }} {{ rule }}
 {% endfor %}
-{% endfor %}
+
 
 # Services rules
 
