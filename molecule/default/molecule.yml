@@ -93,6 +93,7 @@ provisioner:
               - "-m pkttype --pkt-type multicast -j REJECT"
           iptables_services_ssh:
             name: ssh
+            comment: "secure shell port"
             ports: 22
             zones:
               - SERVICE

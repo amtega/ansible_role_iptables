@@ -101,7 +101,10 @@
 {% else %}
 {% set ports_string="-m multiport --dports " + service.ports | join(",") + " " %}
 {% endif %}
--A INPUT-{{ zone_grouper }} {{ source_string | default("") }}-p {{ service.protocol | default("tcp") }} -m state --state NEW -m {{ service.protocol | default("tcp") }} {{ ports_string | default("")}}-j ACCEPT
+{% if service.comment is defined %}
+{% set comment_string="-m comment --comment \"" + service.comment + "\" " %}
+{% endif %}
+-A INPUT-{{ zone_grouper }} {{ source_string | default("") }}-p {{ service.protocol | default("tcp") }} -m state --state NEW -m {{ service.protocol | default("tcp") }} {{ ports_string | default("")}}{{comment_string | default("") }}-j ACCEPT
 {% endif %}
 {% endfor %}
 {% if iptables_zones_managed | selectattr("name", "equalto", zone_grouper) | selectattr("log", "defined") | selectattr("log", "equalto", true) | list | length > 0 %}
