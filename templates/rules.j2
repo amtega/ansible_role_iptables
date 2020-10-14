@@ -16,7 +16,7 @@
 
 # INPUT
 
-{% for zone_name in iptables_zones_managed | map(attribute="name") | list | unique %}
+{% for zone_name in iptables_zones_managed | map(attribute="name") | list | sort | unique %}
 -N INPUT-{{ zone_name }}
 {% endfor %}
 -N INPUT-DENY
@@ -24,7 +24,7 @@
 
 # OUTPUT
 
-{% for zone_name in iptables_zones_managed | map(attribute="name") | list | unique %}
+{% for zone_name in iptables_zones_managed | map(attribute="name") | list | sort | unique %}
 -N OUTPUT-{{ zone_name }}
 {% endfor %}
 -N OUTPUT-DENY
@@ -43,7 +43,7 @@
 # Define jumps for every interface
 
 -A INPUT -i lo -j ACCEPT
-{% for zone in iptables_zones_managed | iptables_unique(['interfaces', 'name']) %}
+{% for zone in iptables_zones_managed | iptables_unique(['interfaces', 'name']) | sort(attribute="name") %}
 {% if zone.interfaces is string %}
 -A INPUT -i {{ zone.interfaces }} -j INPUT-{{ zone.name }}
 {% else %}
@@ -83,11 +83,10 @@
 
 # Raw rules
 
-{% for grouper, list in iptables_zones_managed | groupby("name") %}
-{% for rule in list | selectattr("raw_rules", "defined") | map(attribute="raw_rules") | list | sum(start=[]) | unique %}
+{% for rule in zone_list | selectattr("raw_rules", "defined") | map(attribute="raw_rules") | list | sum(start=[]) | unique %}
 -A INPUT-{{ zone_grouper }} {{ rule }}
 {% endfor %}
-{% endfor %}
+
 
 # Services rules
 
@@ -102,7 +101,10 @@
 {% else %}
 {% set ports_string="-m multiport --dports " + service.ports | join(",") + " " %}
 {% endif %}
--A INPUT-{{ zone_grouper }} {{ source_string | default("") }}-p {{ service.protocol | default("tcp") }} -m state --state NEW -m {{ service.protocol | default("tcp") }} {{ ports_string | default("")}}-j ACCEPT
+{% if service.comment is defined %}
+{% set comment_string="-m comment --comment \"" + service.comment + "\" " %}
+{% endif %}
+-A INPUT-{{ zone_grouper }} {{ source_string | default("") }}-p {{ service.protocol | default("tcp") }} -m state --state NEW -m {{ service.protocol | default("tcp") }} {{ ports_string | default("")}}{{comment_string | default("") }}-j ACCEPT
 {% endif %}
 {% endfor %}
 {% if iptables_zones_managed | selectattr("name", "equalto", zone_grouper) | selectattr("log", "defined") | selectattr("log", "equalto", true) | list | length > 0 %}

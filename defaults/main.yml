@@ -25,6 +25,7 @@ iptables_zones: []
 #
 # {
 #   name: <name of the zone>
+#   comment: <a brief description for service (optonal)>
 #   source: <source address (optional)>
 #   protocol: <protocol (optional, default is tcp)>
 #   ports: <string or list of strings with the port(s) to open>
