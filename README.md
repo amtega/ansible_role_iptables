@@ -44,6 +44,11 @@ This is an example playbook:
 
 Tests are based on [molecule with vagrant virtual machines](https://molecule.readthedocs.io/en/latest/installation.html).
 
+Third party modules are needed for vagrant to be supported:
+~~~ bash
+python3 -m pip install --upgrade molecule-vagrant
+~~~
+
 ```shell
 cd amtega.iptables
 
