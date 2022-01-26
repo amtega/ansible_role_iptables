@@ -6,6 +6,7 @@
       template:
         src: config.j2
         dest: "{{ iptables_config_path }}"
+        mode: 0640
       notify:
         - reload iptables service
 
@@ -13,6 +14,7 @@
       template:
         src: rules.j2
         dest: "{{ iptables_rules_path }}"
+        mode: 0640
       notify:
         - restore iptables rules
         - save iptables rules
@@ -22,6 +24,7 @@
       template:
         src: rsyslog.j2
         dest: "{{ iptables_rsyslog_config_path }}"
+        mode: 0640
       notify:
         - reload rsyslog service
 
@@ -37,6 +40,7 @@
       template:
         src: logrotate.j2
         dest: "{{ iptables_logrotate_config_path }}"
+        mode: 0640
   vars:
     iptables_zones_managed: >-
       {{ iptables_zones
