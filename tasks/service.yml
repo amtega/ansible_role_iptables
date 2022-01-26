@@ -1,7 +1,8 @@
 ---
 # Role service tasks
 
-- meta: flush_handlers
+- name: Flush handlers
+  meta: flush_handlers
   tags:
     - role::iptables
     - role::iptables::service
