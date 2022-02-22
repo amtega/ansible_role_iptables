@@ -35,7 +35,7 @@ dependencies:
   - role: amtega.packages
     vars:
       packages_os:
-        centos:
+        all:
           all:
             iptables: present
             rsyslog: present
@@ -51,17 +51,7 @@ dependencies:
             system-config-firewall: absent
             iptables-services: present
             iptables: present
-            rsyslog: present
-        redhat:
-          all:
-            iptables: present
-            iptables-ipv6: present
-            rsyslog: present
-          7:
-            firewalld: absent
-            firewalld-filesystem: absent
-            system-config-firewall: absent
-            iptables-services: present
+            rsyslog: present        
 
   - role: amtega.select_hostvars
     vars:
